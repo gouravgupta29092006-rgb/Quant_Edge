@@ -1,0 +1,75 @@
+# ────────────────────────────────────────────────────────────
+# QuantEdge — .gitignore
+# CRITICAL: environment files and keys must NEVER be committed
+# ────────────────────────────────────────────────────────────
+
+# ─── Dependencies ───
+node_modules/
+.pnp
+.pnp.js
+
+# ─── Build outputs ───
+.next/
+out/
+dist/
+build/
+.turbo/
+
+# ─── Environment variables — NEVER commit these ───
+.env
+.env.local
+.env.*.local
+apps/backend/.env
+apps/frontend/.env.local
+
+# ─── RSA Keys — NEVER commit ───
+keys/
+*.pem
+
+# ─── Logs ───
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# ─── Database ───
+*.sqlite
+*.sqlite3
+*.db
+
+# ─── OS files ───
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ─── IDE ───
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ─── Testing ───
+coverage/
+.nyc_output/
+jest-stare/
+
+# ─── Prisma ───
+# Keep migrations but ignore local dev artifacts
+apps/backend/prisma/*.db
+
+# ─── Next.js ───
+.vercel
+
+# ─── Misc ───
+*.tsbuildinfo
+.eslintcache
