@@ -1,0 +1,8 @@
+import { Router } from 'express';
+
+const router = Router();
+
+// news routes — stub (see IMPLEMENTATION.md for phase)
+
+export default router;
+
