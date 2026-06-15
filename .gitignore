@@ -73,3 +73,7 @@ apps/backend/prisma/*.db
 # ─── Misc ───
 *.tsbuildinfo
 .eslintcache
+
+# Maven build output
+apps/backend/target/
+
