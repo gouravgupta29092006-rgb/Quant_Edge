@@ -25,6 +25,7 @@ public class ScheduledJobs {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PriceAlertRepository priceAlertRepository;
     private final MarketDataService marketDataService;
+    private final PortfolioSnapshotService portfolioSnapshotService;
 
     // Top symbols to refresh on the real-time feed
     private static final List<String> TRACKED_SYMBOLS = List.of(
@@ -75,10 +76,10 @@ public class ScheduledJobs {
      * Take daily portfolio snapshots at midnight UTC.
      * Stores total value, holdings value, cash for charting.
      */
-    @Scheduled(cron = "0 0 0 * * *", zone = "UTC")    // Midnight UTC
+    @Scheduled(cron = "0 0 0 * * *", zone = "UTC")
     public void takeDailyPortfolioSnapshots() {
-        // Implementation in Phase 5 — Portfolio & Trading
-        log.info("Daily portfolio snapshot job triggered (Phase 5 implementation)");
+        log.info("Daily portfolio snapshot job started");
+        portfolioSnapshotService.takeAllSnapshots();
     }
 
     /**
