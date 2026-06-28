@@ -90,3 +90,27 @@
 **Commit:** (pending)
 **Summary:** Next.js 14 frontend scaffolded with full premium design system. Dark-first color palette (electric indigo brand, dark navy backgrounds). Custom Tailwind components: `.card`, `.btn-primary`, `.input`, `.badge`, `.skeleton`, price display utilities. JetBrains Mono for financial numbers. Animations: fade-in, slide-up, shimmer, glow, float.
 **Next Task:** Phase 6.2 â€” Zustand stores, API client
+
+
+## Entry 005
+
+**Date:** 2026-06-28
+**Phase:** Phase 4 (complete) + Phase 5 (partial)
+**Tasks:** 4.1-4.8 (Phase 4 complete), 5.1-5.4 (Phase 5 partial)
+**Files Modified:**
+- AlphaVantageProvider.java — historical OHLCV from AlphaVantage free API
+- HistoricalDataService.java — chart data for all ranges (1D to MAX)
+- ChartController.java — GET /market/chart/{symbol}?range=1Y
+- NewsService.java — company + market news from Finnhub, deduplicated
+- NewsController.java — GET /news/market + GET /news/{symbol}
+- ScheduledJobs.java — wired price broadcast (15s) + snapshot (midnight)
+- V5__create_stock_quotes_table.sql — missing stock_quotes Flyway migration
+- PortfolioService.java — full paper trading engine with BUY/SELL
+- PortfolioController.java — 6 REST endpoints for portfolio management
+- CreatePortfolioRequest.java, TradeRequest.java, PortfolioResponse.java
+- WatchlistService.java — add/remove/list with 50-item limit
+- WatchlistController.java — watchlist REST endpoints
+- PortfolioSnapshotService.java — daily P&L snapshot job
+**Commits:** 0771e9a, 1bac2ad, bdd4b35, 9caab84, 5f13195, cdeb952, c0b46df, 13b8c13
+**Summary:** Completed Phase 4 (market data, chart, news, real-time WS) and Phase 5 Tasks 5.1-5.4 (portfolio trading, watchlist, snapshots). All commits pushed to origin/develop.
+**Next Task:** Phase 5 Tasks 5.5-5.6 (AnalyticsService) then Phase 6 (Frontend Foundation — API client, Zustand stores, auth pages)
