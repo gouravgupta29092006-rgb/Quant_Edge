@@ -36,9 +36,9 @@
 ```
 Phase 1  — Project Scaffold        [✅] 8/8   tasks  | commit: b29f314, 845e137, 05f561e
 Phase 2  — Database & Core         [✅] 6/6   tasks  | commit: 845e137
-Phase 3  — Authentication          [✅] 9/12  tasks  | commit: 845e137 (3 tasks pending: email templates, rate limiting, integration tests)
-Phase 4  — Market Data             [~]  0/8   tasks  | IN PROGRESS
-Phase 5  — Portfolio & Trading     [ ]  0/10  tasks
+Phase 3  — Authentication          [✅] 9/12  tasks  | commit: 845e137
+Phase 4  — Market Data             [✅] 8/8   tasks  | commit: 0771e9a→bdd4b35→9caab84→5f13195
+Phase 5  — Portfolio & Trading     [~]  2/10  tasks  | commit: cdeb952
 Phase 6  — Frontend Foundation     [~]  2/8   tasks  | layout, providers done
 Phase 7  — Dashboard & Core UI     [ ]  0/9   tasks
 Phase 8  — Analytics Engine        [ ]  0/6   tasks
@@ -51,10 +51,10 @@ Phase 14 — Admin Panel             [ ]  0/6   tasks
 Phase 15 — Testing                 [ ]  0/8   tasks
 Phase 16 — DevOps & Deployment     [ ]  0/8   tasks
 ─────────────────────────────────────────────
-TOTAL                              [~] 25/126 tasks completed
+TOTAL                              [~] 37/126 tasks completed
 
-LAST COMMIT: 151d6f5 — 2026-06-15 | chore: exclude Maven target/ build directory
-GIT BRANCH:  develop
+LAST COMMIT: cdeb952 — 2026-06-28 | feat(phase5): PortfolioService + Controller
+GIT BRANCH:  develop | REMOTE: origin/develop ✅
 ```
 
 ---
