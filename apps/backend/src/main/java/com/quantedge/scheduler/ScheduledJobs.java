@@ -2,6 +2,7 @@ package com.quantedge.scheduler;
 
 import com.quantedge.repository.PriceAlertRepository;
 import com.quantedge.repository.RefreshTokenRepository;
+import com.quantedge.service.MarketDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 
 /**
  * All scheduled background jobs.
@@ -22,6 +24,13 @@ public class ScheduledJobs {
 
     private final RefreshTokenRepository refreshTokenRepository;
     private final PriceAlertRepository priceAlertRepository;
+    private final MarketDataService marketDataService;
+
+    // Top symbols to refresh on the real-time feed
+    private static final List<String> TRACKED_SYMBOLS = List.of(
+            "AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "TSLA", "META",
+            "NFLX", "JPM", "V", "MA", "SPY", "QQQ", "DIA", "IWM"
+    );
 
     /**
      * Clean expired refresh tokens every hour.
@@ -37,11 +46,26 @@ public class ScheduledJobs {
     }
 
     /**
-     * Check active price alerts every minute.
-     * Fetches current prices from cache and evaluates conditions.
-     * Triggered alerts send notifications + emails.
+     * Refresh tracked symbol prices every 15 seconds and broadcast via WebSocket.
+     * Finnhub free tier: 60 req/min → 15 symbols every 15s = safe.
      */
-    @Scheduled(fixedRate = 60000)    // Every 1 minute
+    @Scheduled(fixedRate = 15000)
+    public void refreshAndBroadcastPrices() {
+        log.debug("Broadcasting price updates for {} symbols", TRACKED_SYMBOLS.size());
+        for (String symbol : TRACKED_SYMBOLS) {
+            try {
+                marketDataService.broadcastPriceUpdate(symbol);
+            } catch (Exception e) {
+                log.debug("Price broadcast skipped for {}: {}", symbol, e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Check active price alerts every minute.
+     * Compares cached prices against alert target values.
+     */
+    @Scheduled(fixedRate = 60000)
     public void checkPriceAlerts() {
         // Implementation in Phase 13 — Real-Time Features
         log.debug("Price alert check: scheduled (Phase 13 implementation)");
