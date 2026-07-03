@@ -256,6 +256,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- ── Phase 11: AI Integration (Ollama — ₹0 cost, runs locally) ── -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <!-- ════════════════════════════════════════════════
