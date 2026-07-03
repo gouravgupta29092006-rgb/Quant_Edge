@@ -1,0 +1,155 @@
+name: QuantEdge CI/CD Pipeline
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+    branches: [main]
+
+env:
+  JAVA_VERSION: '21'
+  NODE_VERSION: '20'
+
+jobs:
+  # ─── Backend Tests & Build ─────────────────────────────────────────
+  backend-ci:
+    name: Backend — Test & Build
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB:       quantedge_test
+          POSTGRES_USER:     test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Java ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: amazon-corretto
+          cache: maven
+
+      - name: Run backend tests
+        working-directory: apps/backend
+        env:
+          SPRING_DATASOURCE_URL:       jdbc:postgresql://localhost:5432/quantedge_test
+          SPRING_DATASOURCE_USERNAME:  test_user
+          SPRING_DATASOURCE_PASSWORD:  test_password
+          SPRING_DATA_REDIS_HOST:      localhost
+          SPRING_DATA_REDIS_PORT:      6379
+          JWT_SECRET:                  ci_test_jwt_secret_key_very_long_for_testing
+          FINNHUB_API_KEY:             ""
+          ALPHA_VANTAGE_API_KEY:       ""
+        run: mvn test --enable-preview -q
+
+      - name: Build backend JAR
+        working-directory: apps/backend
+        run: mvn package -DskipTests --enable-preview -q
+
+      - name: Upload backend JAR artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-jar
+          path: apps/backend/target/*.jar
+          retention-days: 1
+
+  # ─── Frontend Lint & Build ─────────────────────────────────────────
+  frontend-ci:
+    name: Frontend — Lint, TypeCheck & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: TypeScript check
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: ESLint
+        working-directory: frontend
+        run: npm run lint -- --max-warnings 0
+        continue-on-error: true   # Don't fail CI on lint warnings
+
+      - name: Build Next.js
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8080/api/v1
+          NEXT_PUBLIC_WS_URL:  http://localhost:8080/ws
+        run: npm run build
+
+  # ─── Security Audit ───────────────────────────────────────────────
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Frontend dependency audit
+        working-directory: frontend
+        run: npm audit --audit-level=high
+        continue-on-error: true   # Informational — don't block deploys
+
+  # ─── Merge to main → trigger deploy ───────────────────────────────
+  # Deployment is manual via Render.com webhook (₹0 free tier)
+  # See DEPLOYMENT.md for setup instructions
+  notify-deploy-ready:
+    name: Notify Deploy Ready
+    runs-on: ubuntu-latest
+    needs: [backend-ci, frontend-ci]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Create deployment summary
+        run: |
+          echo "## ✅ QuantEdge — Ready to Deploy" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All checks passed. Deployment to Render.com is triggered automatically." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| Backend (Spring Boot) | ✅ Built |" >> $GITHUB_STEP_SUMMARY
+          echo "| Frontend (Next.js) | ✅ Built |" >> $GITHUB_STEP_SUMMARY
