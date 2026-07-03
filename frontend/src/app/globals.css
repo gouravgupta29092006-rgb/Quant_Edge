@@ -12,6 +12,25 @@
 @layer base {
   :root {
     color-scheme: dark;
+
+    /* ── CSS custom properties (used by components via var(--*)) ── */
+    --bg-primary:    #0A0B0E;
+    --bg-secondary:  #10121A;
+    --bg-card:       #10121A;
+    --bg-sidebar:    #10121A;
+    --bg-hover:      #1E2238;
+    --bg-elevated:   #1E2238;
+
+    --text-primary:   #F1F5F9;
+    --text-secondary: #94A3B8;
+    --text-muted:     #64748B;
+
+    --border:         #1E2238;
+    --border-hover:   #2D3553;
+
+    --success:  #10B981;
+    --danger:   #EF4444;
+    --warning:  #F59E0B;
   }
 
   * {
@@ -49,6 +68,42 @@
   }
 }
 
+/* ════════════════════════════════════════════════════════════
+   Additional component utilities
+   ════════════════════════════════════════════════════════════ */
+@layer utilities {
+  /* Gradient text shorthand */
+  .text-gradient {
+    background: linear-gradient(135deg, #818CF8 0%, #A78BFA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Shadow glow shorthand */
+  .shadow-glow {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+  }
+
+  /* Scrollbar hidden */
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Pulsing dot for live indicator */
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+  .animate-pulse-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
+
+  /* Line clamp utilities */
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
 /* ════════════════════════════════════════════════════════════
    Component Utilities
    ════════════════════════════════════════════════════════════ */

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { usePortfolioStore } from '@/stores/portfolioStore';
 import { useMarketStore } from '@/stores/marketStore';
 
+
 export default function QuickTradePanel() {
   const { activePortfolioId, activePortfolio, executeTrade, isTrading, error, clearError } = usePortfolioStore();
   const { fetchQuote, quotes } = useMarketStore();
