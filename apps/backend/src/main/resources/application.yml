@@ -15,7 +15,7 @@ spring:
       max-lifetime: 1200000
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     show-sql: false
     properties:
       hibernate:
@@ -43,7 +43,7 @@ spring:
           max-idle: 4
           min-idle: 1
   cache:
-    type: redis
+    type: simple
     redis:
       time-to-live: 300000
       cache-null-values: false
@@ -78,6 +78,16 @@ quantedge:
     jwt-secret: ${JWT_SECRET:quantedge_dev_jwt_secret_key_must_be_at_least_512_bits_long_for_hs512}
     access-token-expiry-ms: 900000
     refresh-token-expiry-ms: 604800000
+    cors-allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
+    bcrypt-rounds: 12
+    max-failed-logins: 5
+    lock-duration-minutes: 15
+  # JWT aliases — JwtService uses quantedge.jwt.* keys
+  jwt:
+    secret: ${JWT_SECRET:quantedge_dev_jwt_secret_key_must_be_at_least_512_bits_long_for_hs512}
+    access-token-expiry-ms: 900000
+    refresh-token-expiry-ms: 604800000
+    interim-token-expiry-ms: 300000
   market:
     finnhub-api-key: ${FINNHUB_API_KEY:}
     alpha-vantage-api-key: ${ALPHA_VANTAGE_API_KEY:}
