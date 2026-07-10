@@ -16,7 +16,7 @@ import java.util.List;
  * Watchlist service.
  * Each user has exactly one watchlist (auto-created on registration).
  * Max 50 items per watchlist.
- * Per TECH_SPEC.md §7 — Watchlist.
+ * Per TECH_SPEC.md Â§7 â€” Watchlist.
  */
 @Service
 @RequiredArgsConstructor
@@ -66,10 +66,8 @@ public class WatchlistService {
             stockRepository.save(stub);
         }
 
-        Stock stockRef = Stock.builder().symbol(upperSymbol).build();
         WatchlistItem item = WatchlistItem.builder()
                 .watchlist(watchlist)
-                .stock(stockRef)
                 .symbol(upperSymbol)
                 .notes(notes)
                 .addedAt(Instant.now())
@@ -103,7 +101,7 @@ public class WatchlistService {
     @Transactional(readOnly = true)
     public List<WatchlistItem> getWatchlistItems(String userId) {
         Watchlist watchlist = getWatchlist(userId);
-        return watchlistItemRepository.findByWatchlistId(watchlist.getId());
+        return watchlistItemRepository.findByWatchlistIdOrderBySortOrderAsc(watchlist.getId());
     }
 
     private void auditLog(String userId, AuditLog.AuditAction action, String symbol) {

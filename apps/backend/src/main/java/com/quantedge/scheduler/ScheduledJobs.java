@@ -3,6 +3,7 @@ package com.quantedge.scheduler;
 import com.quantedge.repository.PriceAlertRepository;
 import com.quantedge.repository.RefreshTokenRepository;
 import com.quantedge.service.MarketDataService;
+import com.quantedge.service.PortfolioSnapshotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,7 +15,7 @@ import java.util.List;
 
 /**
  * All scheduled background jobs.
- * Replaces BullMQ — Spring's @Scheduled is free and built-in.
+ * Replaces BullMQ â€” Spring's @Scheduled is free and built-in.
  * Runs in a dedicated thread pool configured in application.yml.
  */
 @Component
@@ -48,7 +49,7 @@ public class ScheduledJobs {
 
     /**
      * Refresh tracked symbol prices every 15 seconds and broadcast via WebSocket.
-     * Finnhub free tier: 60 req/min → 15 symbols every 15s = safe.
+     * Finnhub free tier: 60 req/min â†’ 15 symbols every 15s = safe.
      */
     @Scheduled(fixedRate = 15000)
     public void refreshAndBroadcastPrices() {
@@ -68,7 +69,7 @@ public class ScheduledJobs {
      */
     @Scheduled(fixedRate = 60000)
     public void checkPriceAlerts() {
-        // Implementation in Phase 13 — Real-Time Features
+        // Implementation in Phase 13 â€” Real-Time Features
         log.debug("Price alert check: scheduled (Phase 13 implementation)");
     }
 
@@ -88,7 +89,7 @@ public class ScheduledJobs {
      */
     @Scheduled(fixedRate = 900000)   // Every 15 minutes
     public void ingestMarketNews() {
-        // Implementation in Phase 12 — News & Intelligence
+        // Implementation in Phase 12 â€” News & Intelligence
         log.debug("News ingestion job triggered (Phase 12 implementation)");
     }
 
@@ -98,7 +99,7 @@ public class ScheduledJobs {
     @Scheduled(cron = "0 0 0 * * *", zone = "UTC")
     @Transactional
     public void resetDailyAiCallCounters() {
-        // Implementation in Phase 11 — AI Integration
+        // Implementation in Phase 11 â€” AI Integration
         log.info("Daily AI counter reset triggered (Phase 11 implementation)");
     }
 }

@@ -1,36 +1,26 @@
 package com.quantedge.service;
 
+import com.quantedge.provider.GeminiProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.messages.SystemMessage;
-import org.springframework.ai.chat.messages.UserMessage;
-import org.springframework.ai.chat.prompt.Prompt;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 
 /**
- * AI Service — Ollama (free, runs locally) via Spring AI.
- * Provides financial insights, portfolio analysis, and stock analysis.
+ * AI Service â€” uses GeminiProvider (Google Gemini free tier, 15 req/min, â‚¹0 cost).
+ * Provides financial insights, portfolio analysis, and educational explanations.
  *
- * ₹0 cost: Uses Ollama which runs models like Mistral/Llama3 locally.
- * Model configured in application.yml: spring.ai.ollama.chat.model
- *
- * Per TECH_SPEC.md §11 — AI Integration.
+ * Per TECH_SPEC.md Â§11 â€” AI Integration.
+ * Gemini free tier: https://aistudio.google.com/app/apikey
  */
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class AIService {
 
-    private final ChatClient chatClient;
-
-    @Value("${spring.ai.ollama.chat.options.model:mistral}")
-    private String model;
+    private final GeminiProvider geminiProvider;
 
     private static final String SYSTEM_PROMPT = """
         You are QuantEdge AI, a professional financial analyst and investment education assistant.
@@ -40,7 +30,7 @@ public class AIService {
         1. This is an EDUCATIONAL, paper trading platform. No real money is involved.
         2. Always add a disclaimer that your insights are for educational purposes only.
         3. Provide concise, structured responses. Use bullet points when listing items.
-        4. Focus on educational value — explain WHY, not just WHAT.
+        4. Focus on educational value â€” explain WHY, not just WHAT.
         5. Never recommend specific investments for real money.
         6. Be data-driven when portfolio data is provided.
         
@@ -48,29 +38,19 @@ public class AIService {
         """;
 
     /**
-     * General financial Q&A.
-     * Cached for 5 minutes to avoid repeated Ollama calls for same questions.
+     * General financial Q&A â€” cached by question hash.
      */
     @Cacheable(value = "ai-insights", key = "#question.hashCode()")
     public String askFinancialQuestion(String question) {
         log.info("[AI] Processing question: {}", question.substring(0, Math.min(question.length(), 80)));
-        try {
-            var prompt = new Prompt(List.of(
-                    new SystemMessage(SYSTEM_PROMPT),
-                    new UserMessage(question)
-            ));
-            return chatClient.prompt(prompt).call().content();
-        } catch (Exception e) {
-            log.error("[AI] Ollama call failed: {}", e.getMessage());
-            return fallbackResponse(question);
-        }
+        return geminiProvider.generate(SYSTEM_PROMPT, question).block();
     }
 
     /**
-     * Portfolio analysis — analyses a user's portfolio and provides AI insights.
+     * Portfolio analysis â€” analyses a user's portfolio and provides AI insights.
      */
     public String analysePortfolio(Map<String, Object> portfolioData) {
-        String contextPrompt = """
+        String userPrompt = """
             Analyse this paper trading portfolio and provide:
             1. Overall portfolio health assessment
             2. Diversification analysis
@@ -91,16 +71,15 @@ public class AIService {
                 portfolioData.getOrDefault("totalReturnPct", "N/A"),
                 portfolioData.getOrDefault("holdings", "N/A")
         );
-
-        return askFinancialQuestion(contextPrompt);
+        return geminiProvider.generate(SYSTEM_PROMPT, userPrompt).block();
     }
 
     /**
-     * Stock analysis — explains a stock's fundamentals.
+     * Stock analysis â€” explains a stock's fundamentals.
      */
     @Cacheable(value = "ai-stock-analysis", key = "#symbol")
     public String analyseStock(String symbol, Map<String, Object> quoteData) {
-        String prompt = """
+        String userPrompt = """
             Provide a comprehensive educational analysis of %s stock:
             
             Current data:
@@ -115,23 +94,22 @@ public class AIService {
             4. Key metrics investors typically look at for this type of stock
             5. Educational takeaway for a beginner investor
             
-            Educational purposes only — not financial advice.
+            Educational purposes only â€” not financial advice.
             """.formatted(
                 symbol,
                 quoteData.getOrDefault("price", "N/A"),
                 quoteData.getOrDefault("changePercent", "N/A"),
                 quoteData.getOrDefault("volume", "N/A")
         );
-
-        return askFinancialQuestion(prompt);
+        return geminiProvider.generate(SYSTEM_PROMPT, userPrompt).block();
     }
 
     /**
-     * Strategy explanation — explains what a trading strategy does.
+     * Strategy explanation â€” explains what a trading strategy does.
      */
     @Cacheable(value = "ai-strategy", key = "#strategyType")
     public String explainStrategy(String strategyType, Map<String, Object> config) {
-        String prompt = """
+        String userPrompt = """
             Explain the '%s' trading strategy in educational terms:
             Configuration: %s
             
@@ -144,15 +122,14 @@ public class AIService {
             
             Make it understandable for someone learning to invest.
             """.formatted(strategyType, config);
-
-        return askFinancialQuestion(prompt);
+        return geminiProvider.generate(SYSTEM_PROMPT, userPrompt).block();
     }
 
     /**
-     * Backtest result interpretation — explains what the backtest results mean.
+     * Backtest result interpretation â€” explains what the backtest results mean.
      */
     public String interpretBacktest(Map<String, Object> backtestResults) {
-        String prompt = """
+        String userPrompt = """
             Interpret these paper trading backtest results and teach the user what they mean:
             
             Results:
@@ -182,27 +159,6 @@ public class AIService {
                 backtestResults.getOrDefault("totalTrades", "N/A"),
                 backtestResults.getOrDefault("sharpeRatio", "N/A")
         );
-
-        return askFinancialQuestion(prompt);
-    }
-
-    /**
-     * Fallback when Ollama is unavailable (e.g., not installed yet).
-     */
-    private String fallbackResponse(String question) {
-        return """
-            > **QuantEdge AI is temporarily unavailable.**
-            
-            The AI assistant requires Ollama to be running locally. To enable AI features:
-            
-            1. Install Ollama from [ollama.ai](https://ollama.ai) (free)
-            2. Run: `ollama pull mistral`
-            3. Start Ollama: `ollama serve`
-            4. Restart the QuantEdge backend
-            
-            This is a one-time setup. Ollama runs entirely on your machine at ₹0 cost.
-            
-            *Your question:* %s
-            """.formatted(question);
+        return geminiProvider.generate(SYSTEM_PROMPT, userPrompt).block();
     }
 }

@@ -21,15 +21,15 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Two-tier cache strategy:
- *   L1: Caffeine (in-memory, microsecond access) — for hot, short-lived data
- *   L2: Upstash Redis (distributed, per-instance) — for shared, longer-lived data
+ *   L1: Caffeine (in-memory, microsecond access) â€” for hot, short-lived data
+ *   L2: Upstash Redis (distributed, per-instance) â€” for shared, longer-lived data
  *
- * Cost: ₹0 — Caffeine is a free Java library, Upstash is free tier.
+ * Cost: â‚¹0 â€” Caffeine is a free Java library, Upstash is free tier.
  */
 @Configuration
 public class CacheConfig {
 
-    // ─── Cache name constants ─────────────────────────────────
+    // â”€â”€â”€ Cache name constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public static final String CACHE_QUOTES      = "stock-quotes";       // 15s TTL
     public static final String CACHE_COMPANY     = "company-info";       // 24h TTL
     public static final String CACHE_HISTORICAL  = "historical-prices";  // 1h TTL
@@ -39,7 +39,7 @@ public class CacheConfig {
     public static final String CACHE_PORTFOLIO   = "portfolio-data";     // 30s TTL
 
     /**
-     * L1 Cache — Caffeine (in-process, zero network latency)
+     * L1 Cache â€” Caffeine (in-process, zero network latency)
      * Used as primary cache for hot market data endpoints.
      */
     @Bean
@@ -54,7 +54,7 @@ public class CacheConfig {
     }
 
     /**
-     * L2 Cache — Redis (Upstash, distributed)
+     * L2 Cache â€” Redis (Upstash, distributed)
      * Used for longer-lived data shared across restarts.
      */
     @Bean

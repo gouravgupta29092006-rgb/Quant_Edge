@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 /**
- * AI Controller — exposes AI-powered financial insights.
+ * AI Controller â€” exposes AI-powered financial insights.
  * Base path: /api/v1/ai
- * Per TECH_SPEC.md §11 — AI Integration.
+ * Per TECH_SPEC.md Â§11 â€” AI Integration.
  */
 @RestController
 @RequestMapping("/ai")
@@ -25,7 +25,7 @@ public class AIController {
 
     private final AIService aiService;
 
-    /** POST /ai/ask — general financial Q&A */
+    /** POST /ai/ask â€” general financial Q&A */
     @PostMapping("/ask")
     @Operation(summary = "Ask the AI a financial question")
     public ResponseEntity<ApiResponse<String>> askQuestion(
@@ -33,16 +33,16 @@ public class AIController {
             @AuthenticationPrincipal UserDetails user) {
         String question = body.getOrDefault("question", "").trim();
         if (question.isBlank()) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Question cannot be empty"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("VALIDATION_ERROR", "Question cannot be empty"));
         }
         if (question.length() > 1000) {
-            return ResponseEntity.badRequest().body(ApiResponse.error("Question too long (max 1000 chars)"));
+            return ResponseEntity.badRequest().body(ApiResponse.error("VALIDATION_ERROR", "Question too long (max 1000 chars)"));
         }
         String answer = aiService.askFinancialQuestion(question);
         return ResponseEntity.ok(ApiResponse.success(answer));
     }
 
-    /** POST /ai/analyse/portfolio — portfolio AI analysis */
+    /** POST /ai/analyse/portfolio â€” portfolio AI analysis */
     @PostMapping("/analyse/portfolio")
     @Operation(summary = "Get AI analysis of a portfolio")
     public ResponseEntity<ApiResponse<String>> analysePortfolio(
@@ -52,7 +52,7 @@ public class AIController {
         return ResponseEntity.ok(ApiResponse.success(analysis));
     }
 
-    /** POST /ai/analyse/stock/{symbol} — stock AI analysis */
+    /** POST /ai/analyse/stock/{symbol} â€” stock AI analysis */
     @PostMapping("/analyse/stock/{symbol}")
     @Operation(summary = "Get AI analysis of a stock")
     public ResponseEntity<ApiResponse<String>> analyseStock(
@@ -64,7 +64,7 @@ public class AIController {
         return ResponseEntity.ok(ApiResponse.success(analysis));
     }
 
-    /** POST /ai/explain/strategy — explain a trading strategy */
+    /** POST /ai/explain/strategy â€” explain a trading strategy */
     @PostMapping("/explain/strategy")
     @Operation(summary = "Get AI explanation of a trading strategy")
     public ResponseEntity<ApiResponse<String>> explainStrategy(
@@ -77,7 +77,7 @@ public class AIController {
         return ResponseEntity.ok(ApiResponse.success(explanation));
     }
 
-    /** POST /ai/interpret/backtest — interpret backtest results */
+    /** POST /ai/interpret/backtest â€” interpret backtest results */
     @PostMapping("/interpret/backtest")
     @Operation(summary = "Get AI interpretation of backtest results")
     public ResponseEntity<ApiResponse<String>> interpretBacktest(

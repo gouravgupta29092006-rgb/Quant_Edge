@@ -30,13 +30,12 @@
          ════════════════════════════════════════════════ -->
     <properties>
         <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Dependency versions -->
         <jjwt.version>0.12.6</jjwt.version>
-        <mapstruct.version>1.6.0</mapstruct.version>
-        <lombok.version>1.18.32</lombok.version>
+        <mapstruct.version>1.6.3</mapstruct.version>
+        <lombok.version>1.18.38</lombok.version>
         <springdoc.version>2.5.0</springdoc.version>
         <resilience4j.version>2.2.0</resilience4j.version>
         <bucket4j.version>8.10.1</bucket4j.version>
@@ -256,13 +255,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ── Phase 11: AI Integration (Ollama — ₹0 cost, runs locally) ── -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-
     </dependencies>
 
     <!-- ════════════════════════════════════════════════
@@ -282,20 +274,18 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <!-- Enable virtual threads (Java 21) -->
-                    <jvmArguments>--enable-preview</jvmArguments>
+                    <!-- Java 25 Virtual Threads enabled by default -->
                 </configuration>
             </plugin>
 
-            <!-- Maven Compiler Plugin — Java 21 -->
+            <!-- Maven Compiler Plugin: compile to Java 21 bytecode (Spring Boot 3.3 compatible) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <release>21</release>
                     <compilerArgs>
-                        <arg>--enable-preview</arg>
+                        <arg>-parameters</arg>
                     </compilerArgs>
                     <!-- Lombok + MapStruct annotation processor order -->
                     <annotationProcessorPaths>
@@ -323,7 +313,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <argLine>--enable-preview</argLine>
+                    <argLine/>
                 </configuration>
             </plugin>
 

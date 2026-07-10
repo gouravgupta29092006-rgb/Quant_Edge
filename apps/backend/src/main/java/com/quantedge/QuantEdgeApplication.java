@@ -11,10 +11,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * QuantEdge Application Entry Point
  *
  * AI-powered financial intelligence platform.
- * Educational and analytical only — no real money trading.
+ * Educational and analytical only â€” no real money trading.
  *
  * Stack: Java 21 + Spring Boot 3 + PostgreSQL + Upstash Redis
- * Cost: ₹0 (all free-tier services)
+ * Cost: â‚¹0 (all free-tier services)
  */
 @SpringBootApplication
 @EnableCaching          // Caffeine L1 cache + Redis L2 cache

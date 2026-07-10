@@ -15,13 +15,13 @@ import java.util.*;
 
 /**
  * Historical price data service.
- * Sources: Alpha Vantage (primary) → Finnhub (fallback)
+ * Sources: Alpha Vantage (primary) â†’ Finnhub (fallback)
  *
  * Supported intervals:
- *   1D, 1W, 1M → daily OHLCV from AlphaVantage TIME_SERIES_DAILY
- *   1d (intraday 1min), 5d (5min), 1mo (15min) → TIME_SERIES_INTRADAY
+ *   1D, 1W, 1M â†’ daily OHLCV from AlphaVantage TIME_SERIES_DAILY
+ *   1d (intraday 1min), 5d (5min), 1mo (15min) â†’ TIME_SERIES_INTRADAY
  *
- * Per TECH_SPEC.md §4 — Historical Data.
+ * Per TECH_SPEC.md Â§4 â€” Historical Data.
  */
 @Service
 @RequiredArgsConstructor
@@ -55,7 +55,7 @@ public class HistoricalDataService {
         return fetchDaily(upperSymbol, range, fullHistory);
     }
 
-    // ─── Private Fetchers ─────────────────────────────────────
+    // â”€â”€â”€ Private Fetchers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private List<Map<String, Object>> fetchDaily(String symbol, String range, boolean full) {
         Map avData = alphaVantageProvider.getDailyTimeSeries(symbol, full).block();

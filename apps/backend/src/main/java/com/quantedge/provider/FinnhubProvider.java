@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Finnhub market data provider.
- * Free tier: 60 requests/minute — sufficient for portfolio project.
+ * Free tier: 60 requests/minute â€” sufficient for portfolio project.
  * Provides: real-time quotes, company info, news, earnings
  *
  * Docs: https://finnhub.io/docs/api

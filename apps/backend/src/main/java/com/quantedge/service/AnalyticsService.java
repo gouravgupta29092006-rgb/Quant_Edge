@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Portfolio analytics service.
  * Computes risk-adjusted return metrics used on the Dashboard.
- * Per TECH_SPEC.md §8 — Analytics Engine.
+ * Per TECH_SPEC.md Â§8 â€” Analytics Engine.
  *
  * Metrics computed:
  *   - Total return (%) and annualised return (%)
@@ -49,7 +49,7 @@ public class AnalyticsService {
     private static final BigDecimal ANNUALISE_FACTOR = new BigDecimal("252");  // trading days/year
     private static final MathContext MC = new MathContext(10, RoundingMode.HALF_UP);
 
-    // ─── Public API ───────────────────────────────────────────
+    // â”€â”€â”€ Public API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Compute full analytics for a portfolio over a date range.
@@ -131,7 +131,7 @@ public class AnalyticsService {
                 .collect(Collectors.toList());
     }
 
-    // ─── Metric Computations ──────────────────────────────────
+    // â”€â”€â”€ Metric Computations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private List<BigDecimal> computeDailyReturns(List<PortfolioSnapshot> snapshots) {
         List<BigDecimal> returns = new ArrayList<>();

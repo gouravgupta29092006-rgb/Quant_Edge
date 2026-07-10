@@ -17,13 +17,13 @@ import java.time.LocalDate;
 import java.util.*;
 
 /**
- * Backtesting engine — simulates a strategy on historical data.
- * Per TECH_SPEC.md §10 — Backtesting Engine.
+ * Backtesting engine â€” simulates a strategy on historical data.
+ * Per TECH_SPEC.md Â§10 â€” Backtesting Engine.
  *
  * Supported strategies (via config map):
- *   type: SMA_CROSSOVER    → SMA fast/slow crossover
- *   type: RSI              → RSI overbought/oversold
- *   type: BUY_AND_HOLD     → Simple benchmark
+ *   type: SMA_CROSSOVER    â†’ SMA fast/slow crossover
+ *   type: RSI              â†’ RSI overbought/oversold
+ *   type: BUY_AND_HOLD     â†’ Simple benchmark
  *
  * Run is async to avoid blocking the HTTP thread on large date ranges.
  * Status polling via GET /backtests/{id}.
@@ -65,13 +65,17 @@ public class BacktestService {
     }
 
     /**
-     * Async backtest runner — executed in a Virtual Thread pool.
+     * Async backtest runner â€” executed in a Virtual Thread pool.
      */
     @Async
     public void runBacktestAsync(String backtestId, Strategy strategy, String symbol,
                                   LocalDate fromDate, LocalDate toDate, BigDecimal initialCapital) {
         try {
-            Map<String, Object> results = runStrategy(strategy.getConfig(), symbol, fromDate, toDate, initialCapital);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> strategyRules = strategy.getRules() instanceof Map<?,?> m
+                    ? (Map<String, Object>) m
+                    : Map.of();
+            Map<String, Object> results = runStrategy(strategyRules, symbol, fromDate, toDate, initialCapital);
             updateBacktestResults(backtestId, results);
         } catch (Exception e) {
             log.error("Backtest {} failed: {}", backtestId, e.getMessage());
@@ -82,7 +86,7 @@ public class BacktestService {
         }
     }
 
-    // ─── Strategy Engines ─────────────────────────────────────
+    // â”€â”€â”€ Strategy Engines â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private Map<String, Object> runStrategy(Map<String, Object> config, String symbol,
                                              LocalDate from, LocalDate to, BigDecimal initialCapital) {
@@ -96,8 +100,9 @@ public class BacktestService {
         candles = candles.stream()
                 .filter(c -> {
                     String date = (String) c.get("date");
-                    return date != null && !date.compareTo(from.toString()) < 0
-                            && !date.compareTo(to.toString()) > 0;
+                    return date != null
+                            && date.compareTo(from.toString()) >= 0
+                            && date.compareTo(to.toString()) <= 0;
                 })
                 .toList();
 
@@ -150,14 +155,14 @@ public class BacktestService {
 
             BigDecimal price = (BigDecimal) candles.get(i).get("close");
 
-            // Golden cross → BUY
+            // Golden cross â†’ BUY
             if (prevFast.compareTo(prevSlow) <= 0 && fast.compareTo(slowMa) > 0 && cash.compareTo(BigDecimal.ZERO) > 0) {
                 shares = cash.divide(price, 4, RoundingMode.HALF_UP);
                 lastBuyPrice = price;
                 cash = BigDecimal.ZERO;
                 trades.add(Map.of("action", "BUY", "date", candles.get(i).get("date"), "price", price));
             }
-            // Death cross → SELL
+            // Death cross â†’ SELL
             else if (prevFast.compareTo(prevSlow) >= 0 && fast.compareTo(slowMa) < 0 && shares.compareTo(BigDecimal.ZERO) > 0) {
                 cash = shares.multiply(price);
                 shares = BigDecimal.ZERO;
@@ -211,7 +216,7 @@ public class BacktestService {
         return buildResults(initialCapital, finalValue, totalReturn, wins, losses, candles, trades);
     }
 
-    // ─── Indicator Computations ───────────────────────────────
+    // â”€â”€â”€ Indicator Computations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private List<BigDecimal> computeSma(List<BigDecimal> prices, int period) {
         List<BigDecimal> sma = new ArrayList<>(Collections.nCopies(prices.size(), null));
@@ -254,7 +259,7 @@ public class BacktestService {
         return rsi;
     }
 
-    // ─── Helpers ──────────────────────────────────────────────
+    // â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private Map<String, Object> buildResults(BigDecimal initial, BigDecimal finalValue, BigDecimal totalReturn,
                                               int wins, int losses, List<Map<String, Object>> candles,

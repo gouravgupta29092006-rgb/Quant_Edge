@@ -18,7 +18,7 @@ import java.util.Map;
 
 /**
  * Analytics Controller.
- * Per TECH_SPEC.md §8 — Analytics Engine.
+ * Per TECH_SPEC.md Â§8 â€” Analytics Engine.
  * Base path: /api/v1/analytics
  */
 @RestController

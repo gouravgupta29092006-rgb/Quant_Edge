@@ -32,7 +32,7 @@ import java.util.List;
 
 /**
  * Spring Security configuration.
- * Per TECH_SPEC.md §12 — Security Implementation
+ * Per TECH_SPEC.md Â§12 â€” Security Implementation
  *
  * Architecture:
  *   - Stateless JWT (no sessions)
@@ -63,22 +63,22 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // ─── Disable CSRF (stateless JWT, no cookies for auth) ────
+            // â”€â”€â”€ Disable CSRF (stateless JWT, no cookies for auth) â”€â”€â”€â”€
             .csrf(AbstractHttpConfigurer::disable)
 
-            // ─── CORS ─────────────────────────────────────────────────
+            // â”€â”€â”€ CORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            // ─── Stateless Session (JWT, no HttpSession) ──────────────
+            // â”€â”€â”€ Stateless Session (JWT, no HttpSession) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
-            // ─── Authorization Rules ──────────────────────────────────
+            // â”€â”€â”€ Authorization Rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             .authorizeHttpRequests(auth -> auth
                 // Health + actuator
                 .requestMatchers("/health", "/actuator/**").permitAll()
-                // Swagger UI (dev only — disabled in prod via application-prod.yml)
+                // Swagger UI (dev only â€” disabled in prod via application-prod.yml)
                 .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                 // Public auth endpoints
                 .requestMatchers(HttpMethod.POST,
@@ -96,7 +96,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
 
-            // ─── Custom 401/403 handlers ──────────────────────────────
+            // â”€â”€â”€ Custom 401/403 handlers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             .exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType(MediaType.APPLICATION_JSON_VALUE);
@@ -116,17 +116,17 @@ public class SecurityConfig {
                 })
             )
 
-            // ─── Authentication Provider ──────────────────────────────
+            // â”€â”€â”€ Authentication Provider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             .authenticationProvider(authenticationProvider())
 
-            // ─── JWT Filter (before Spring's username/password filter) ─
+            // â”€â”€â”€ JWT Filter (before Spring's username/password filter) â”€
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     /**
-     * CORS configuration — allows Next.js frontend to call the API.
+     * CORS configuration â€” allows Next.js frontend to call the API.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -146,7 +146,7 @@ public class SecurityConfig {
     }
 
     /**
-     * BCrypt password encoder — rounds=12 per TECH_SPEC.md §12.1
+     * BCrypt password encoder â€” rounds=12 per TECH_SPEC.md Â§12.1
      */
     @Bean
     public PasswordEncoder passwordEncoder() {

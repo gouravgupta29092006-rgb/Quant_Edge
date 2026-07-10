@@ -23,7 +23,7 @@ import java.util.Optional;
  * Takes a daily snapshot of each portfolio's total value.
  * Used by the performance chart on the dashboard.
  * Called by ScheduledJobs at midnight UTC.
- * Per TECH_SPEC.md §6 — Portfolio Analytics.
+ * Per TECH_SPEC.md Â§6 â€” Portfolio Analytics.
  */
 @Service
 @RequiredArgsConstructor

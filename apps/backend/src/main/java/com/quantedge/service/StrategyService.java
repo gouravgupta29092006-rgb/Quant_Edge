@@ -15,9 +15,9 @@ import java.math.RoundingMode;
 import java.util.*;
 
 /**
- * Strategy service — CRUD for trading strategies.
+ * Strategy service â€” CRUD for trading strategies.
  * Strategies are user-defined rule sets (JSON) persisted to DB.
- * Per TECH_SPEC.md §9 — Strategy Builder.
+ * Per TECH_SPEC.md Â§9 â€” Strategy Builder.
  */
 @Service
 @RequiredArgsConstructor
@@ -28,7 +28,7 @@ public class StrategyService {
     private final StrategyRepository strategyRepository;
     private final BacktestRepository backtestRepository;
 
-    // ─── Strategy CRUD ────────────────────────────────────────
+    // â”€â”€â”€ Strategy CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Transactional(readOnly = true)
     public List<Strategy> getUserStrategies(String userId) {
@@ -50,8 +50,10 @@ public class StrategyService {
                 .user(userRef)
                 .name(name.trim())
                 .description(description)
-                .config(config)
-                .isPublic(false)
+                .rules(config)   // store config as rules JSON
+                .indicators(Map.of())
+                .entryConditions(Map.of())
+                .exitConditions(Map.of())
                 .build();
         strategy = strategyRepository.save(strategy);
         log.info("Strategy created: {} for user: {}", strategy.getId(), userId);
@@ -63,7 +65,7 @@ public class StrategyService {
         Strategy strategy = getStrategy(strategyId, userId);
         if (name != null) strategy.setName(name.trim());
         if (description != null) strategy.setDescription(description);
-        if (config != null) strategy.setConfig(config);
+        if (config != null) strategy.setRules(config);  // rules stores the config
         return strategyRepository.save(strategy);
     }
 
@@ -73,12 +75,14 @@ public class StrategyService {
         log.info("Strategy deleted: {}", strategyId);
     }
 
-    // ─── Backtests ────────────────────────────────────────────
+    // â”€â”€â”€ Backtests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Transactional(readOnly = true)
     public List<Backtest> getStrategyBacktests(String strategyId, String userId) {
         getStrategy(strategyId, userId); // ownership check
-        return backtestRepository.findByStrategyIdOrderByCreatedAtDesc(strategyId);
+        return backtestRepository.findByStrategyIdOrderByCreatedAtDesc(
+                strategyId, org.springframework.data.domain.PageRequest.of(0, 100)
+        ).getContent();
     }
 
     @Transactional(readOnly = true)

@@ -1,0 +1,183 @@
+# ═══════════════════════════════════════════════════════════
+# QuantEdge — Spring Boot Application Configuration
+# Default profile (activated in all environments unless overridden)
+# ═══════════════════════════════════════════════════════════
+
+spring:
+  application:
+    name: quantedge-api
+
+  # Active profile — override in deployment
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+  # ─── JPA / Hibernate ────────────────────────────────────
+  jpa:
+    hibernate:
+      ddl-auto: validate           # Flyway manages schema — NEVER let Hibernate alter it
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_schema: public
+        jdbc:
+          batch_size: 20
+          fetch_size: 20
+        order_inserts: true
+        order_updates: true
+        connection:
+          provider_disables_autocommit: true
+    open-in-view: false            # Prevent lazy-loading anti-pattern
+
+  # ─── Flyway (Database Migrations) ───────────────────────
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+    out-of-order: false
+
+  # ─── Jackson (JSON) ─────────────────────────────────────
+  jackson:
+    default-property-inclusion: non_null
+    deserialization:
+      fail-on-unknown-properties: false
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: UTC
+
+  # ─── Async Thread Pool ──────────────────────────────────
+  task:
+    execution:
+      pool:
+        core-size: 4
+        max-size: 16
+        queue-capacity: 100
+        thread-name-prefix: quantedge-async-
+    scheduling:
+      pool:
+        size: 4
+        thread-name-prefix: quantedge-sched-
+
+  # ─── Thymeleaf (Email Templates) ────────────────────────
+  thymeleaf:
+    prefix: classpath:/templates/email/
+    suffix: .html
+    cache: true
+
+# ─── Server Configuration ─────────────────────────────────
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 1024
+  servlet:
+    context-path: /api/v1
+  error:
+    include-message: never          # Never expose internal errors to client
+    include-stacktrace: never
+    include-binding-errors: never
+  tomcat:
+    threads:
+      max: 200
+      min-spare: 10
+    connection-timeout: 30000
+
+# ─── Actuator (Health + Metrics — all free) ───────────────
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+      show-components: when-authorized
+  info:
+    env:
+      enabled: true
+
+# ─── Application Info ─────────────────────────────────────
+info:
+  app:
+    name: QuantEdge API
+    version: 1.0.0
+    description: AI-powered financial intelligence platform
+
+# ─── Logging ──────────────────────────────────────────────
+logging:
+  level:
+    root: INFO
+    com.quantedge: DEBUG
+    org.springframework.security: WARN
+    org.hibernate.SQL: WARN
+    org.hibernate.type.descriptor.sql: WARN
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
+
+# ─── Application Custom Properties ────────────────────────
+quantedge:
+  # JWT Configuration
+  jwt:
+    secret: ${JWT_SECRET:your-256-bit-secret-change-in-production-minimum-32-chars-required}
+    access-token-expiry-ms: 900000       # 15 minutes
+    refresh-token-expiry-ms: 2592000000  # 30 days
+    interim-token-expiry-ms: 300000      # 5 minutes (for 2FA)
+
+  # Security
+  security:
+    bcrypt-rounds: 12
+    max-failed-logins: 5
+    lock-duration-minutes: 15
+    cors-allowed-origins: ${FRONTEND_URL:http://localhost:3000}
+
+  # AI (Gemini Free — ₹0)
+  ai:
+    provider: gemini                     # gemini | openrouter | disabled
+    gemini-api-key: ${GEMINI_API_KEY:}
+    gemini-model: gemini-1.5-flash
+    max-calls-per-hour: 20
+    max-calls-per-day: 100
+    cache-ttl-seconds: 21600             # 6 hours
+
+  # Market Data (All Free APIs)
+  market:
+    primary-provider: finnhub            # finnhub | alphavantage | yahoo
+    finnhub-api-key: ${FINNHUB_API_KEY:}
+    alpha-vantage-api-key: ${ALPHA_VANTAGE_API_KEY:}
+    quote-cache-ttl-seconds: 15
+    historical-cache-ttl-seconds: 3600
+    company-cache-ttl-seconds: 86400
+
+  # Email (Resend Free — 100/day)
+  email:
+    from: "QuantEdge <noreply@quantedge.app>"
+    dev-mode: ${EMAIL_DEV_MODE:true}     # true = log to console, false = send real email
+
+  # Portfolio Limits
+  portfolio:
+    max-per-user: 5
+    default-initial-cash: 100000.00
+
+  # Rate Limiting
+  rate-limit:
+    global-per-minute: 60
+    auth-per-15-minutes: 10
+    ai-per-hour: 20
+    search-per-second: 5
+    trade-per-second: 1
+
+  # --- AI Integration (Ollama � ?0 cost, runs locally) ---------------
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${OLLAMA_MODEL:mistral}
+          temperature: 0.7
+          top-p: 0.9
+          num-predict: 1024

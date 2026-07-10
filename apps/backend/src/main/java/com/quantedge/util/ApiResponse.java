@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * Standard API response envelope.
- * ALL API responses follow this shape — per TECH_SPEC.md §1.2
+ * ALL API responses follow this shape â€” per TECH_SPEC.md Â§1.2
  *
  * Success:  { success: true,  data: {...}, meta: {...}, timestamp: "..." }
  * Error:    { success: false, error: { code, message, details }, timestamp: "..." }
@@ -32,7 +32,7 @@ public class ApiResponse<T> {
         this.timestamp = Instant.now().toString();
     }
 
-    // ─── Success Factories ─────────────────────────────────────
+    // â”€â”€â”€ Success Factories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public static <T> ApiResponse<T> success(T data) {
         return new ApiResponse<>(true, data, null, null);
@@ -42,7 +42,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(true, data, null, meta);
     }
 
-    // ─── Error Factories ───────────────────────────────────────
+    // â”€â”€â”€ Error Factories â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public static <T> ApiResponse<T> error(String code, String message) {
         ErrorBody errorBody = new ErrorBody(code, message, null);
@@ -54,7 +54,7 @@ public class ApiResponse<T> {
         return new ApiResponse<>(false, null, errorBody, null);
     }
 
-    // ─── Nested Records ───────────────────────────────────────
+    // â”€â”€â”€ Nested Records â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Getter
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -85,7 +85,7 @@ public class ApiResponse<T> {
     }
 
     /**
-     * Pagination metadata — per TECH_SPEC.md §1.4
+     * Pagination metadata â€” per TECH_SPEC.md Â§1.4
      */
     @Getter
     @Builder

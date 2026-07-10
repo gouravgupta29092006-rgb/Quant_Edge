@@ -13,9 +13,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * News service — fetches market and company news from Finnhub.
+ * News service â€” fetches market and company news from Finnhub.
  * Finnhub free tier includes company news and general market news.
- * Per TECH_SPEC.md §5 — News & Intelligence.
+ * Per TECH_SPEC.md Â§5 â€” News & Intelligence.
  */
 @Service
 @RequiredArgsConstructor
@@ -39,7 +39,7 @@ public class NewsService {
 
         return Arrays.stream(rawNews)
                 .filter(item -> item instanceof Map)
-                .map(item -> (Map<?, ?>) item)
+                .map(item -> (Map<Object, Object>) item)
                 .filter(item -> item.get("headline") != null)
                 .limit(20)
                 .map(item -> {
@@ -77,7 +77,7 @@ public class NewsService {
                 if (raw != null) {
                     Arrays.stream(raw)
                             .filter(item -> item instanceof Map)
-                            .map(item -> (Map<?, ?>) item)
+                            .map(item -> (Map<Object, Object>) item)
                             .filter(item -> item.get("headline") != null)
                             .limit(5)
                             .forEach(item -> {

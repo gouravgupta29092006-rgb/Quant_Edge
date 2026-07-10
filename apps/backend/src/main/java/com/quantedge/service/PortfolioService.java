@@ -19,15 +19,15 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Portfolio service — manages virtual portfolios, holdings, and paper trades.
- * Per TECH_SPEC.md §6 — Portfolio & Trading Engine.
- * Per APPFLOW.md — Portfolio Module.
+ * Portfolio service â€” manages virtual portfolios, holdings, and paper trades.
+ * Per TECH_SPEC.md Â§6 â€” Portfolio & Trading Engine.
+ * Per APPFLOW.md â€” Portfolio Module.
  *
  * Business rules:
  *  - Max 5 portfolios per user (PORTFOLIO_LIMIT)
  *  - Must have sufficient cash balance to BUY
  *  - Must have sufficient shares to SELL
- *  - Commission is always ₹0 (virtual trading)
+ *  - Commission is always â‚¹0 (virtual trading)
  *  - Daily snapshots taken at midnight UTC via ScheduledJobs
  */
 @Service
@@ -43,7 +43,7 @@ public class PortfolioService {
     private final MarketDataService marketDataService;
     private final AuditLogRepository auditLogRepository;
 
-    // ─── Portfolio CRUD ───────────────────────────────────────
+    // â”€â”€â”€ Portfolio CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Transactional(readOnly = true)
     public List<Portfolio> getUserPortfolios(String userId) {
@@ -69,7 +69,7 @@ public class PortfolioService {
         }
 
         // Build user reference
-        User userRef = User.builder().id(userId).build();  // proxy reference — no full load
+        User userRef = User.builder().id(userId).build();  // proxy reference â€” no full load
 
         BigDecimal initialCapital = request.getInitialCapital() != null
                 ? request.getInitialCapital()
@@ -98,7 +98,7 @@ public class PortfolioService {
         log.info("Portfolio soft-deleted: {}", portfolioId);
     }
 
-    // ─── Trade Execution ──────────────────────────────────────
+    // â”€â”€â”€ Trade Execution â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Execute a BUY or SELL trade on a portfolio.
@@ -147,10 +147,8 @@ public class PortfolioService {
             holding.setAverageCost(newTotalCost.divide(newTotalShares, 4, RoundingMode.HALF_UP));
             holding.setTotalCost(newTotalCost);
         } else {
-            Stock stockRef = Stock.builder().symbol(symbol).build();
             holding = Holding.builder()
                     .portfolio(portfolio)
-                    .stock(stockRef)
                     .symbol(symbol)
                     .shares(shares)
                     .averageCost(price)
@@ -227,7 +225,7 @@ public class PortfolioService {
         return tx;
     }
 
-    // ─── Portfolio Value Calculation ──────────────────────────
+    // â”€â”€â”€ Portfolio Value Calculation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Calculate current total portfolio value.
@@ -268,7 +266,7 @@ public class PortfolioService {
                 .build();
     }
 
-    // ─── Transaction History ──────────────────────────────────
+    // â”€â”€â”€ Transaction History â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Transactional(readOnly = true)
     public org.springframework.data.domain.Page<Transaction> getTransactions(
@@ -278,7 +276,7 @@ public class PortfolioService {
         return transactionRepository.findByPortfolioIdOrderByExecutedAtDesc(portfolioId, pageable);
     }
 
-    // ─── Private Helpers ──────────────────────────────────────
+    // â”€â”€â”€ Private Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private void auditLog(String userId, String entityId, AuditLog.AuditAction action) {
         auditLogRepository.save(AuditLog.builder()

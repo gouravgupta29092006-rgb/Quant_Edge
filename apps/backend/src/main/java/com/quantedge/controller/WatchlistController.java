@@ -25,7 +25,7 @@ public class WatchlistController {
 
     private final WatchlistService watchlistService;
 
-    /** GET /watchlist — get user watchlist with all items */
+    /** GET /watchlist â€” get user watchlist with all items */
     @GetMapping
     @Operation(summary = "Get user watchlist")
     public ResponseEntity<ApiResponse<List<WatchlistItem>>> getWatchlist(
@@ -34,7 +34,7 @@ public class WatchlistController {
         return ResponseEntity.ok(ApiResponse.success(items));
     }
 
-    /** POST /watchlist — add symbol */
+    /** POST /watchlist â€” add symbol */
     @PostMapping
     @Operation(summary = "Add stock to watchlist")
     public ResponseEntity<ApiResponse<WatchlistItem>> addSymbol(
@@ -46,7 +46,7 @@ public class WatchlistController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(item));
     }
 
-    /** DELETE /watchlist/{symbol} — remove symbol */
+    /** DELETE /watchlist/{symbol} â€” remove symbol */
     @DeleteMapping("/{symbol}")
     @Operation(summary = "Remove stock from watchlist")
     public ResponseEntity<ApiResponse<Void>> removeSymbol(

@@ -16,8 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Authentication controller — all public auth endpoints.
- * Per TECH_SPEC.md §2 — Authentication API
+ * Authentication controller â€” all public auth endpoints.
+ * Per TECH_SPEC.md Â§2 â€” Authentication API
  *
  * Base path: /api/v1/auth (configured in SecurityConfig)
  */
@@ -105,7 +105,7 @@ public class AuthController {
             @Valid @RequestBody ForgotPasswordRequest request) {
 
         authService.forgotPassword(request.getEmail());
-        // Always return success — never reveal if email exists (security)
+        // Always return success â€” never reveal if email exists (security)
         return ResponseEntity.ok(ApiResponse.success(
                 new MessageResponse("If that email is registered, a reset link has been sent.")));
     }

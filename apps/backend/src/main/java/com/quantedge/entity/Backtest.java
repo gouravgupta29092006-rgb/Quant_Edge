@@ -81,7 +81,7 @@ public class Backtest {
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
 
-    // ─── Result metrics ───────────────────────────────────────
+    // â”€â”€â”€ Result metrics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     @Column(name = "total_return_pct", precision = 10, scale = 4)
     private BigDecimal totalReturnPct;
     @Column(name = "annualized_return", precision = 10, scale = 4)
@@ -119,7 +119,7 @@ public class Backtest {
     @Column(name = "beta", precision = 8, scale = 4)
     private BigDecimal beta;
 
-    // ─── JSON result blobs ─────────────────────────────────────
+    // â”€â”€â”€ JSON result blobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "equity_curve", columnDefinition = "jsonb")
     private Object equityCurve;

@@ -12,4 +12,5 @@ public interface WatchlistItemRepository extends JpaRepository<WatchlistItem, St
     boolean existsByWatchlistIdAndSymbol(String watchlistId, String symbol);
     long countByWatchlistId(String watchlistId);
     void deleteByWatchlistIdAndSymbol(String watchlistId, String symbol);
+    java.util.List<WatchlistItem> findByWatchlistIdOrderBySortOrderAsc(String watchlistId);
 }

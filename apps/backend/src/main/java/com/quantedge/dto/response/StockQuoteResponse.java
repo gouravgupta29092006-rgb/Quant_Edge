@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
- * Quote response DTO — serialized to frontend.
+ * Quote response DTO â€” serialized to frontend.
  * Includes formatted change percent and direction indicator.
  */
 @Data

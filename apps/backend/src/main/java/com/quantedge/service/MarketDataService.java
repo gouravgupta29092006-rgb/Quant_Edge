@@ -25,12 +25,12 @@ import java.util.*;
  * Market Data Service.
  * Primary data flow:
  *   1. Check Redis cache (15s TTL)
- *   2. On miss → Finnhub free API
+ *   2. On miss â†’ Finnhub free API
  *   3. Update DB + Redis
  *   4. Broadcast via WebSocket
  *
- * All external APIs are free tier. Cost: ₹0.
- * Per TECH_SPEC.md §4 — Market Data API.
+ * All external APIs are free tier. Cost: â‚¹0.
+ * Per TECH_SPEC.md Â§4 â€” Market Data API.
  */
 @Service
 @RequiredArgsConstructor
@@ -46,11 +46,11 @@ public class MarketDataService {
     private static final String REDIS_QUOTE_KEY = "quote:";
     private static final long QUOTE_CACHE_TTL_SECONDS = 15;
 
-    // ─── Quotes ───────────────────────────────────────────────
+    // â”€â”€â”€ Quotes â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     /**
      * Get real-time quote for a symbol.
-     * Cache: Redis 15s → Finnhub on miss → DB upsert.
+     * Cache: Redis 15s â†’ Finnhub on miss â†’ DB upsert.
      */
     @Cacheable(cacheNames = CacheConfig.CACHE_QUOTES, key = "#symbol.toUpperCase()")
     public StockQuote getQuote(String symbol) {
@@ -96,7 +96,7 @@ public class MarketDataService {
 
     /**
      * Get company profile (metadata: sector, employees, website, etc.)
-     * Cache: Redis 24h — company info changes rarely.
+     * Cache: Redis 24h â€” company info changes rarely.
      */
     @Cacheable(cacheNames = CacheConfig.CACHE_COMPANY, key = "#symbol.toUpperCase()")
     @Transactional
@@ -167,7 +167,7 @@ public class MarketDataService {
     }
 
     /**
-     * Get market movers — top gainers and losers.
+     * Get market movers â€” top gainers and losers.
      * Built from cached quotes of the seeded stock universe.
      */
     @Cacheable(cacheNames = CacheConfig.CACHE_MOVERS)
@@ -210,7 +210,7 @@ public class MarketDataService {
         }
     }
 
-    // ─── Private Mappers ──────────────────────────────────────
+    // â”€â”€â”€ Private Mappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @SuppressWarnings("unchecked")
     private StockQuote mapFinnhubToQuote(String symbol, Map data) {

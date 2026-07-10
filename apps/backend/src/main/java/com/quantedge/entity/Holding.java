@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
- * Holding entity — one row per stock per portfolio.
+ * Holding entity â€” one row per stock per portfolio.
  * Updated on every trade. Stores average cost basis.
  */
 @Entity

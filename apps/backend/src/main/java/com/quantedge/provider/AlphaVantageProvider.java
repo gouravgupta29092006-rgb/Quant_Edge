@@ -15,12 +15,12 @@ import java.util.Map;
  * Sign up: https://www.alphavantage.co/support/#api-key
  *
  * Functions used:
- *   TIME_SERIES_DAILY        — daily OHLCV (up to 20 years)
- *   TIME_SERIES_INTRADAY     — intraday OHLCV (last 2 months)
- *   GLOBAL_QUOTE            — real-time quote (fallback for Finnhub)
- *   OVERVIEW                 — company fundamentals
+ *   TIME_SERIES_DAILY        â€” daily OHLCV (up to 20 years)
+ *   TIME_SERIES_INTRADAY     â€” intraday OHLCV (last 2 months)
+ *   GLOBAL_QUOTE            â€” real-time quote (fallback for Finnhub)
+ *   OVERVIEW                 â€” company fundamentals
  *
- * Cost: ₹0 — free API key.
+ * Cost: â‚¹0 â€” free API key.
  */
 @Component
 @Slf4j
@@ -81,7 +81,7 @@ public class AlphaVantageProvider {
     }
 
     /**
-     * Global quote — used as Finnhub fallback.
+     * Global quote â€” used as Finnhub fallback.
      */
     public Mono<Map> getGlobalQuote(String symbol) {
         return webClient.get()
@@ -99,7 +99,7 @@ public class AlphaVantageProvider {
     }
 
     /**
-     * Company overview — fundamentals (P/E, EPS, market cap, etc.)
+     * Company overview â€” fundamentals (P/E, EPS, market cap, etc.)
      */
     public Mono<Map> getCompanyOverview(String symbol) {
         return webClient.get()

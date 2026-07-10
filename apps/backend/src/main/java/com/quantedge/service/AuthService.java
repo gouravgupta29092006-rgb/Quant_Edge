@@ -32,8 +32,8 @@ import java.util.Base64;
 import java.util.HexFormat;
 
 /**
- * Authentication service — handles all auth flows.
- * Per TECH_SPEC.md §12 — Security Implementation.
+ * Authentication service â€” handles all auth flows.
+ * Per TECH_SPEC.md Â§12 â€” Security Implementation.
  */
 @Service
 @RequiredArgsConstructor
@@ -60,7 +60,7 @@ public class AuthService {
     @Value("${quantedge.jwt.refresh-token-expiry-ms:2592000000}")
     private long refreshTokenExpiryMs;
 
-    // ─── Register ─────────────────────────────────────────────
+    // â”€â”€â”€ Register â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public AuthResponse register(RegisterRequest request, String ipAddress) {
         // Check email uniqueness
@@ -101,7 +101,7 @@ public class AuthService {
         return buildAuthResponse(user, true);
     }
 
-    // ─── Login ────────────────────────────────────────────────
+    // â”€â”€â”€ Login â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public AuthResponse login(LoginRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         String email = request.getEmail().toLowerCase().trim();
@@ -152,7 +152,7 @@ public class AuthService {
         return buildAuthResponse(user, request.isRememberMe());
     }
 
-    // ─── 2FA Verification ─────────────────────────────────────
+    // â”€â”€â”€ 2FA Verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public AuthResponse verify2fa(Verify2faRequest request, HttpServletResponse httpResponse) {
         if (!jwtService.validateTokenType(request.getInterimToken(), "interim")) {
@@ -175,7 +175,7 @@ public class AuthService {
         return buildAuthResponse(user, false);
     }
 
-    // ─── Refresh Token ────────────────────────────────────────
+    // â”€â”€â”€ Refresh Token â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public AuthResponse refresh(RefreshTokenRequest request, HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         String tokenHash = hashToken(request.getRefreshToken());
@@ -203,7 +203,7 @@ public class AuthService {
         return buildAuthResponse(user, false);
     }
 
-    // ─── Logout ───────────────────────────────────────────────
+    // â”€â”€â”€ Logout â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public void logout(String refreshToken, String userId) {
         String tokenHash = hashToken(refreshToken);
@@ -212,7 +212,7 @@ public class AuthService {
         auditLog(userId, AuditLog.AuditAction.AUTH_LOGOUT, null, true);
     }
 
-    // ─── Password Reset ───────────────────────────────────────
+    // â”€â”€â”€ Password Reset â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public void forgotPassword(String email) {
         userRepository.findActiveByEmail(email.toLowerCase()).ifPresent(user -> {
@@ -252,7 +252,7 @@ public class AuthService {
         auditLog(user.getId(), AuditLog.AuditAction.AUTH_PASSWORD_RESET, null, true);
     }
 
-    // ─── Email Verification ───────────────────────────────────
+    // â”€â”€â”€ Email Verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public void verifyEmail(String token) {
         String tokenHash = hashToken(token);
@@ -278,7 +278,7 @@ public class AuthService {
         verificationTokenRepository.save(vt);
     }
 
-    // ─── Profile ──────────────────────────────────────────────
+    // â”€â”€â”€ Profile â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @Transactional(readOnly = true)
     public AuthResponse.UserProfile getProfile(String userId) {
@@ -287,7 +287,7 @@ public class AuthService {
         return toUserProfile(user);
     }
 
-    // ─── 2FA Setup ────────────────────────────────────────────
+    // â”€â”€â”€ 2FA Setup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public AuthResponse.TwoFactorSetup setup2fa(String userId) {
         User user = userRepository.findById(userId)
@@ -342,7 +342,7 @@ public class AuthService {
         auditLog(userId, AuditLog.AuditAction.AUTH_2FA_DISABLE, null, true);
     }
 
-    // ─── Private Helpers ──────────────────────────────────────
+    // â”€â”€â”€ Private Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private AuthResponse buildAuthResponse(User user, boolean rememberMe) {
         String accessToken = jwtService.generateAccessToken(

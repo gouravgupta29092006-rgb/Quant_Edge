@@ -23,7 +23,7 @@ import java.util.Optional;
  * All endpoints are authenticated (set in SecurityConfig).
  *
  * Base path: /api/v1/market
- * Per APPFLOW.md — Market Intelligence module.
+ * Per APPFLOW.md â€” Market Intelligence module.
  */
 @RestController
 @RequestMapping("/market")
@@ -55,7 +55,7 @@ public class MarketController {
 
     /**
      * POST /market/quotes/batch
-     * Quotes for multiple symbols — used by portfolio and watchlist views.
+     * Quotes for multiple symbols â€” used by portfolio and watchlist views.
      * Body: { "symbols": ["AAPL", "MSFT", "GOOGL"] }
      */
     @PostMapping("/quotes/batch")
@@ -78,7 +78,7 @@ public class MarketController {
 
     /**
      * GET /market/company/{symbol}
-     * Company profile — sector, employees, website, logo.
+     * Company profile â€” sector, employees, website, logo.
      * Cache: 24 hours
      */
     @GetMapping("/company/{symbol}")
@@ -110,7 +110,7 @@ public class MarketController {
      * Cache: 2 minutes
      */
     @GetMapping("/movers")
-    @Operation(summary = "Get market movers — top gainers and losers")
+    @Operation(summary = "Get market movers â€” top gainers and losers")
     public ResponseEntity<ApiResponse<Map<String, List<StockQuote>>>> getMarketMovers() {
         Map<String, List<StockQuote>> movers = marketDataService.getMarketMovers();
         return ResponseEntity.ok(ApiResponse.success(movers));

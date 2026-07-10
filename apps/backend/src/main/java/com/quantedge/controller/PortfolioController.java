@@ -27,7 +27,7 @@ import java.util.List;
  * All endpoints require authentication.
  *
  * Base path: /api/v1/portfolios
- * Per APPFLOW.md — Portfolio Module.
+ * Per APPFLOW.md â€” Portfolio Module.
  */
 @RestController
 @RequestMapping("/portfolios")

@@ -48,7 +48,7 @@ public class Strategy {
     @Builder.Default
     private StrategyStatus status = StrategyStatus.DRAFT;
 
-    // JSON columns — store structured rule definitions
+    // JSON columns â€” store structured rule definitions
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "rules", columnDefinition = "jsonb", nullable = false)
     private Object rules;

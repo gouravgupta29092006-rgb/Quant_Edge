@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Strategy & Backtest Controller.
  * Base path: /api/v1/strategies
- * Per TECH_SPEC.md §9 — Strategy Builder, §10 — Backtesting Engine.
+ * Per TECH_SPEC.md Â§9 â€” Strategy Builder, Â§10 â€” Backtesting Engine.
  */
 @RestController
 @RequestMapping("/strategies")
@@ -33,7 +33,7 @@ public class StrategyController {
     private final StrategyService strategyService;
     private final BacktestService backtestService;
 
-    /** GET /strategies — list user strategies */
+    /** GET /strategies â€” list user strategies */
     @GetMapping
     @Operation(summary = "List all user strategies")
     public ResponseEntity<ApiResponse<List<Strategy>>> listStrategies(
@@ -41,7 +41,7 @@ public class StrategyController {
         return ResponseEntity.ok(ApiResponse.success(strategyService.getUserStrategies(user.getUsername())));
     }
 
-    /** POST /strategies — create new strategy */
+    /** POST /strategies â€” create new strategy */
     @PostMapping
     @Operation(summary = "Create a new trading strategy")
     public ResponseEntity<ApiResponse<Strategy>> createStrategy(
@@ -55,7 +55,7 @@ public class StrategyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(strategy));
     }
 
-    /** GET /strategies/{id} — get strategy details */
+    /** GET /strategies/{id} â€” get strategy details */
     @GetMapping("/{id}")
     @Operation(summary = "Get strategy details")
     public ResponseEntity<ApiResponse<Strategy>> getStrategy(
@@ -64,7 +64,7 @@ public class StrategyController {
         return ResponseEntity.ok(ApiResponse.success(strategyService.getStrategy(id, user.getUsername())));
     }
 
-    /** PUT /strategies/{id} — update strategy */
+    /** PUT /strategies/{id} â€” update strategy */
     @PutMapping("/{id}")
     @Operation(summary = "Update a strategy")
     public ResponseEntity<ApiResponse<Strategy>> updateStrategy(
@@ -78,7 +78,7 @@ public class StrategyController {
         return ResponseEntity.ok(ApiResponse.success(updated));
     }
 
-    /** DELETE /strategies/{id} — delete strategy */
+    /** DELETE /strategies/{id} â€” delete strategy */
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a strategy")
     public ResponseEntity<ApiResponse<Void>> deleteStrategy(
@@ -88,9 +88,9 @@ public class StrategyController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    // ─── Backtests ────────────────────────────────────────────
+    // â”€â”€â”€ Backtests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-    /** POST /strategies/{id}/backtests — run a backtest */
+    /** POST /strategies/{id}/backtests â€” run a backtest */
     @PostMapping("/{id}/backtests")
     @Operation(summary = "Run a backtest on a strategy")
     public ResponseEntity<ApiResponse<Backtest>> runBacktest(
@@ -103,7 +103,7 @@ public class StrategyController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success(backtest));
     }
 
-    /** GET /strategies/{id}/backtests — list backtests for a strategy */
+    /** GET /strategies/{id}/backtests â€” list backtests for a strategy */
     @GetMapping("/{id}/backtests")
     @Operation(summary = "List backtests for a strategy")
     public ResponseEntity<ApiResponse<List<Backtest>>> listBacktests(
@@ -113,7 +113,7 @@ public class StrategyController {
         return ResponseEntity.ok(ApiResponse.success(backtests));
     }
 
-    /** GET /strategies/backtests/{backtestId} — poll backtest status */
+    /** GET /strategies/backtests/{backtestId} â€” poll backtest status */
     @GetMapping("/backtests/{backtestId}")
     @Operation(summary = "Get backtest status and results")
     public ResponseEntity<ApiResponse<Backtest>> getBacktest(
