@@ -15,9 +15,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 /**
- * Authentication controller â€” all public auth endpoints.
- * Per TECH_SPEC.md Â§2 â€” Authentication API
+ * Authentication controller — all public auth endpoints.
+ * Per TECH_SPEC.md §2 — Authentication API
  *
  * Base path: /api/v1/auth (configured in SecurityConfig)
  */
@@ -105,7 +107,7 @@ public class AuthController {
             @Valid @RequestBody ForgotPasswordRequest request) {
 
         authService.forgotPassword(request.getEmail());
-        // Always return success â€” never reveal if email exists (security)
+        // Always return success — never reveal if email exists (security)
         return ResponseEntity.ok(ApiResponse.success(
                 new MessageResponse("If that email is registered, a reset link has been sent.")));
     }
@@ -147,6 +149,22 @@ public class AuthController {
     }
 
     /**
+     * POST /auth/change-password
+     * Change current user's password (also available at /users/change-password).
+     */
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<MessageResponse>> changePassword(
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal UserDetails userDetails) {
+
+        String current = body.get("currentPassword");
+        String newPwd  = body.get("newPassword");
+        authService.changePassword(userDetails.getUsername(), current, newPwd);
+        return ResponseEntity.ok(ApiResponse.success(
+                new MessageResponse("Password changed successfully.")));
+    }
+
+    /**
      * POST /auth/2fa/setup
      * Generate a TOTP secret and QR code for 2FA setup.
      */
@@ -168,7 +186,8 @@ public class AuthController {
             @AuthenticationPrincipal UserDetails userDetails) {
 
         authService.enable2fa(userDetails.getUsername(), request.getCode());
-        return ResponseEntity.ok(ApiResponse.success(new MessageResponse("Two-factor authentication enabled.")));
+        return ResponseEntity.ok(ApiResponse.success(
+                new MessageResponse("Two-factor authentication enabled.")));
     }
 
     /**
@@ -181,6 +200,7 @@ public class AuthController {
             @AuthenticationPrincipal UserDetails userDetails) {
 
         authService.disable2fa(userDetails.getUsername(), request.getPassword());
-        return ResponseEntity.ok(ApiResponse.success(new MessageResponse("Two-factor authentication disabled.")));
+        return ResponseEntity.ok(ApiResponse.success(
+                new MessageResponse("Two-factor authentication disabled.")));
     }
 }
