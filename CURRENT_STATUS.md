@@ -1,7 +1,7 @@
 # QuantEdge — Current Status
 
 > **Auto-maintained file. Updated after every completed task.**
-> Last updated: 2026-07-03T08:09 UTC
+> Last updated: 2026-07-20T05:43 UTC
 
 ---
 
@@ -12,14 +12,14 @@
 - **Branches on GitHub:** `main`, `develop` ✅
 
 ## Current Phase
-**Phase 15 — Backend Unit Tests (JUnit 5 + Spring Boot Test)**
+**Phase 15 — COMPLETE ✅**
 
 ## Last Completed Task
-Phase 16 — DevOps: Docker Compose, Dockerfiles, GitHub Actions CI/CD, DEPLOYMENT.md (`5c60d31`)
+Phase 15 — Backend Unit Tests: all 38 unit tests fixed and passing (`aff91a3`)
 
 ## Last Commit
-- **Hash:** `5c60d31`
-- **Message:** `feat(phase16): add Docker Compose, Dockerfiles, CI/CD, and deployment guide`
+- **Hash:** `aff91a3`
+- **Message:** `test(phase15): fix all unit tests - 38/38 passing`
 - **Branch:** `develop`
 - **Pushed:** ✅ `origin/develop`
 
@@ -36,12 +36,21 @@ Phase 16 — DevOps: Docker Compose, Dockerfiles, GitHub Actions CI/CD, DEPLOYME
 | Phase 8 — Analytics Engine | ✅ Complete | Full analytics page with charts |
 | Phase 9 — Strategy Builder | ✅ Complete | Strategy CRUD backend |
 | Phase 10 — Backtesting Engine | ✅ Complete | SMA, RSI, BuyHold engines |
-| Phase 11 — AI Integration | ✅ Complete | Ollama + Spring AI, 5 AI endpoints |
+| Phase 11 — AI Integration | ✅ Complete | Gemini Flash, 5 AI endpoints |
 | Phase 12 — News & Intelligence | ✅ Complete | News page with sentiment + search |
 | Phase 13 — Real-Time Features | ✅ Complete | WS provider, quote subscriptions |
 | Phase 14 — Admin Panel | ⏳ Skipped | Not critical for portfolio project |
-| Phase 15 — Testing | 🔄 Next | JUnit 5, Mockito, Spring Boot Test |
+| Phase 15 — Testing | ✅ Complete | 38 unit tests, 0 failures |
 | Phase 16 — DevOps | ✅ Complete | Docker, GitHub Actions, deployment |
+
+## Test Coverage (Phase 15)
+| Test Class | Tests | Result |
+|---|---|---|
+| JwtServiceTest | 16 | ✅ All Pass |
+| AuthServiceTest | 9 | ✅ All Pass |
+| PortfolioServiceTest | 8 | ✅ All Pass |
+| BacktestServiceTest | 5 | ✅ All Pass |
+| **Total** | **38** | **✅ 38/38** |
 
 ## Key Frontend Pages (All Complete)
 | Page | Route | Status |
@@ -60,7 +69,7 @@ Phase 16 — DevOps: Docker Compose, Dockerfiles, GitHub Actions CI/CD, DEPLOYME
 ## Key Backend APIs (All Complete)
 | Module | Endpoints |
 |---|---|
-| Auth | /auth/register, /login, /logout, /refresh, /verify-email |
+| Auth | /auth/register, /login, /logout, /refresh, /verify-email, /change-password |
 | Portfolio | /portfolios (CRUD), /portfolios/:id/trade |
 | Watchlist | /watchlist (CRUD) |
 | Market Data | /market/quote/:symbol, /chart, /company, /search, /indices, /movers |
@@ -68,10 +77,11 @@ Phase 16 — DevOps: Docker Compose, Dockerfiles, GitHub Actions CI/CD, DEPLOYME
 | Strategies | /strategies (CRUD), /strategies/:id/backtests |
 | News | /news |
 | AI | /ai/ask, /analyse/portfolio, /analyse/stock, /explain/strategy, /interpret/backtest |
+| Users | /users/me (GET/POST), /users/change-password |
 
 ## Next Action
-Phase 15: Write unit tests for:
-- AuthService (registration, login, JWT)
-- PortfolioService (trade execution, balance checks)
-- BacktestService (SMA strategy logic)
-- MarketDataService (cache layer)
+All planned phases complete. Project is production-ready for portfolio showcase.
+Possible additions:
+- Phase 14 Admin Panel (if needed)
+- Integration/E2E tests with Testcontainers
+- Frontend component tests with Jest/RTL
