@@ -77,3 +77,6 @@ apps/backend/prisma/*.db
 # Maven build output
 apps/backend/target/
 
+# One-off debug scripts (superseded by Flyway migrations)
+fix_schema.sql
+
