@@ -1,0 +1,25 @@
+# Local development profile — overrides application.yml for dev without Redis
+# Activate with: -Dspring.profiles.active=local
+
+spring:
+  cache:
+    type: simple
+
+  # Disable Redis autoconfigure for local dev
+  data:
+    redis:
+      repositories:
+        enabled: false
+
+  # Disable mail for dev
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.mail.MailAutoConfiguration
+
+logging:
+  level:
+    root: INFO
+    com.quantedge: DEBUG
+    org.springframework.web: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.orm.jdbc.bind: TRACE

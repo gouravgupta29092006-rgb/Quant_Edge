@@ -19,7 +19,7 @@ import java.io.IOException;
 /**
  * JWT authentication filter.
  * Runs once per request, extracts and validates Bearer token.
- * Per TECH_SPEC.md §12.2
+ * Per TECH_SPEC.md Â§12.2
  */
 @Component
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // No Bearer token — let Spring Security handle (will return 401 if route is protected)
+        // No Bearer token â€” let Spring Security handle (will return 401 if route is protected)
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -73,7 +73,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         } catch (Exception e) {
             log.warn("JWT filter error: {}", e.getMessage());
-            // Don't set authentication — Spring Security will handle as anonymous
+            // Don't set authentication â€” Spring Security will handle as anonymous
         }
 
         filterChain.doFilter(request, response);

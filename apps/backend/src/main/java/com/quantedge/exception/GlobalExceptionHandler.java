@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 /**
  * Global exception handler.
  * Translates all exceptions into the standard API response format.
- * Per TECH_SPEC.md §15 error response standards.
+ * Per TECH_SPEC.md Â§15 error response standards.
  */
 @RestControllerAdvice
 @Slf4j
@@ -142,7 +142,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * Catch-all for unexpected exceptions — never expose internal details.
+     * Catch-all for unexpected exceptions â€” never expose internal details.
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleUnexpectedException(
@@ -159,7 +159,7 @@ public class GlobalExceptionHandler {
                 ));
     }
 
-    // ─── Private Helpers ──────────────────────────────────────
+    // â”€â”€â”€ Private Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private ApiResponse.FieldError toFieldError(FieldError fe) {
         return new ApiResponse.FieldError(fe.getField(), fe.getDefaultMessage(), fe.getRejectedValue());
@@ -167,7 +167,7 @@ public class GlobalExceptionHandler {
 
     private ApiResponse.FieldError toFieldError(ConstraintViolation<?> cv) {
         String field = cv.getPropertyPath().toString();
-        // Strip method name prefix if present (e.g., "registerUser.email" → "email")
+        // Strip method name prefix if present (e.g., "registerUser.email" â†’ "email")
         if (field.contains(".")) {
             field = field.substring(field.lastIndexOf('.') + 1);
         }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Portfolio entity — maps to SCHEMA.md Portfolio model.
+ * Portfolio entity â€” maps to SCHEMA.md Portfolio model.
  * Virtual portfolio for simulated trading. Max 5 per user.
  */
 @Entity
@@ -64,7 +64,7 @@ public class Portfolio {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
-    // ─── Relations ────────────────────────────────────────────
+    // â”€â”€â”€ Relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default

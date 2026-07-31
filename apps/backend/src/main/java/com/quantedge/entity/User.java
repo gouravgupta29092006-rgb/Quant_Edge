@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * User entity — maps to SCHEMA.md User model.
+ * User entity â€” maps to SCHEMA.md User model.
  * Primary user account with security fields, roles, and 2FA support.
  */
 @Entity
@@ -100,7 +100,7 @@ public class User {
     @Column(name = "deleted_at")
     private Instant deletedAt;  // Soft delete
 
-    // ─── Relations ────────────────────────────────────────────
+    // â”€â”€â”€ Relations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserPreferences preferences;
@@ -112,7 +112,7 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Watchlist watchlist;
 
-    // ─── Business Methods ─────────────────────────────────────
+    // â”€â”€â”€ Business Methods â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public boolean isCurrentlyLocked() {
         return lockedUntil != null && lockedUntil.isAfter(Instant.now());
@@ -130,7 +130,7 @@ public class User {
         return firstName + " " + lastName;
     }
 
-    // ─── Enums ────────────────────────────────────────────────
+    // â”€â”€â”€ Enums â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public enum UserRole {
         USER, ADMIN, MODERATOR

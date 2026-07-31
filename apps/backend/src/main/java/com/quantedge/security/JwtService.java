@@ -38,7 +38,7 @@ public class JwtService {
     @Value("${quantedge.jwt.interim-token-expiry-ms}")
     private long interimTokenExpiryMs;
 
-    // ─── Token Generation ─────────────────────────────────────
+    // â”€â”€â”€ Token Generation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public String generateAccessToken(String userId, String email, String role) {
         return buildToken(
@@ -65,7 +65,7 @@ public class JwtService {
         );
     }
 
-    // ─── Token Validation ─────────────────────────────────────
+    // â”€â”€â”€ Token Validation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public boolean validateToken(String token) {
         try {
@@ -87,7 +87,7 @@ public class JwtService {
         }
     }
 
-    // ─── Claims Extraction ────────────────────────────────────
+    // â”€â”€â”€ Claims Extraction â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -117,7 +117,7 @@ public class JwtService {
         }
     }
 
-    // ─── Private Helpers ──────────────────────────────────────
+    // â”€â”€â”€ Private Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
     private String buildToken(Map<String, Object> extraClaims, String subject, long expiryMs) {
         Date now = new Date();
@@ -128,7 +128,7 @@ public class JwtService {
                 .subject(subject)
                 .issuedAt(now)
                 .expiration(expiry)
-                .id(UUID.randomUUID().toString())   // jti — prevents replay
+                .id(UUID.randomUUID().toString())   // jti â€” prevents replay
                 .signWith(getSigningKey())
                 .compact();
     }

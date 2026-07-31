@@ -11,7 +11,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 /**
- * PortfolioSnapshot — daily snapshot of portfolio value for charting.
+ * PortfolioSnapshot â€” daily snapshot of portfolio value for charting.
  */
 @Entity
 @Table(name = "portfolio_snapshots",

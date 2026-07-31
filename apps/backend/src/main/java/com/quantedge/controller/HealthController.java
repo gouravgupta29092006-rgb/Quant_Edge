@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.Map;
 
 /**
- * Health check endpoint — publicly accessible.
+ * Health check endpoint â€” publicly accessible.
  * Used by Railway/Render health checks.
  */
 @RestController

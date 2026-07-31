@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
  * SpringDoc OpenAPI (Swagger UI) configuration.
  * Access at: http://localhost:8080/api/v1/swagger-ui/index.html
  * Disabled in production via application-prod.yml.
- * Cost: ₹0 — springdoc-openapi is free.
+ * Cost: â‚¹0 â€” springdoc-openapi is free.
  */
 @Configuration
 public class OpenApiConfig {
@@ -26,7 +26,7 @@ public class OpenApiConfig {
                         .version("1.0.0")
                         .description("""
                             AI-powered financial intelligence platform.
-                            Educational and analytical only — no real-money trading.
+                            Educational and analytical only â€” no real-money trading.
                             
                             **Authentication:** Bearer JWT token in Authorization header.
                             Use `POST /auth/login` to obtain an access token.

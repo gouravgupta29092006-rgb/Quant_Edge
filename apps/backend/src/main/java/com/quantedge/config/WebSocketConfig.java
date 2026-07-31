@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 /**
  * STOMP WebSocket configuration.
  * Replaces Socket.io + Redis adapter with Spring's built-in WebSocket support.
- * Cost: ₹0 — built into Spring Boot, no external dependencies.
+ * Cost: â‚¹0 â€” built into Spring Boot, no external dependencies.
  *
  * Client connects to: ws://localhost:8080/api/v1/ws
  * Subscribe to topics:  /topic/price/{symbol}
@@ -26,7 +26,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        // In-memory message broker — no Redis needed for single-node deployment
+        // In-memory message broker â€” no Redis needed for single-node deployment
         config.enableSimpleBroker(
             "/topic",   // broadcast (stock prices, market movers)
             "/queue"    // user-specific (notifications, portfolio updates)

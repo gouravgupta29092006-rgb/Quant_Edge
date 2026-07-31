@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 /**
- * Transaction entity — immutable ledger of all trades and cash movements.
+ * Transaction entity â€” immutable ledger of all trades and cash movements.
  */
 @Entity
 @Table(name = "transactions", indexes = {

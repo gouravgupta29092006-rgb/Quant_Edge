@@ -9,7 +9,7 @@ import java.time.Instant;
 
 /**
  * Stores hashed refresh tokens per user session.
- * Raw token is never stored — only SHA-256 hash.
+ * Raw token is never stored â€” only SHA-256 hash.
  */
 @Entity
 @Table(name = "refresh_tokens", indexes = {

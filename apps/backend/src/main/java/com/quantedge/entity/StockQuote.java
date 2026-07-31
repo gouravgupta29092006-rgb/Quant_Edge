@@ -8,7 +8,7 @@ import java.time.Instant;
 
 /**
  * Latest real-time quote per stock symbol.
- * One row per symbol — upserted on every price update.
+ * One row per symbol â€” upserted on every price update.
  * Backed by Redis cache for sub-second reads.
  */
 @Entity

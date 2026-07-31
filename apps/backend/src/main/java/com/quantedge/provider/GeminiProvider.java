@@ -9,7 +9,7 @@ import reactor.core.publisher.Mono;
 import java.util.Map;
 
 /**
- * Gemini AI provider (Google AI Studio — Free Tier).
+ * Gemini AI provider (Google AI Studio â€” Free Tier).
  * Free: 15 requests/minute, 1M tokens/day, no credit card required.
  * Sign up: https://aistudio.google.com/app/apikey
  *
@@ -46,7 +46,7 @@ public class GeminiProvider {
      */
     public Mono<String> generate(String systemPrompt, String userPrompt) {
         if (apiKey == null || apiKey.isBlank()) {
-            log.warn("Gemini API key not configured — returning placeholder");
+            log.warn("Gemini API key not configured â€” returning placeholder");
             return Mono.just("AI analysis is not configured. Please set GEMINI_API_KEY.");
         }
 

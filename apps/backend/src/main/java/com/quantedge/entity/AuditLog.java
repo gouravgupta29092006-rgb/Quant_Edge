@@ -8,8 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.Instant;
 
 /**
- * Immutable audit log — records all significant user actions.
- * Per TECH_SPEC.md §14 — Audit Trail.
+ * Immutable audit log â€” records all significant user actions.
+ * Per TECH_SPEC.md Â§14 â€” Audit Trail.
  */
 @Entity
 @Table(name = "audit_logs", indexes = {
@@ -26,7 +26,7 @@ public class AuditLog {
     private String id;
 
     @Column(name = "user_id")
-    private String userId;  // nullable — system events have no user
+    private String userId;  // nullable â€” system events have no user
 
     @Enumerated(EnumType.STRING)
     @Column(name = "action", nullable = false)
