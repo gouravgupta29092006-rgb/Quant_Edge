@@ -1,5 +1,6 @@
 package com.quantedge;
 
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -10,13 +11,21 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 /**
- * Application context smoke test.
+ * Application context smoke test — INTEGRATION TEST.
+ *
  * Uses Testcontainers to spin up real PostgreSQL in Docker.
  * Verifies the entire Spring context loads correctly.
+ *
+ * Tagged @integration so it is excluded from the unit-test surefire phase
+ * (which runs with -Dgroups=!integration or excludedGroups=integration).
+ * This test is only run in CI where Docker is available.
+ *
+ * Per TECH_SPEC.md §15 — Testing Strategy.
  */
 @SpringBootTest
 @ActiveProfiles("test")
 @Testcontainers
+@Tag("integration")
 class QuantEdgeApplicationTests {
 
     @Container
@@ -40,6 +49,6 @@ class QuantEdgeApplicationTests {
 
     @Test
     void contextLoads() {
-        // Verifies Spring context starts without errors
+        // Verifies Spring context starts without errors (requires Docker)
     }
 }

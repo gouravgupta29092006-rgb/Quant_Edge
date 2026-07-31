@@ -52,22 +52,28 @@ jobs:
           distribution: amazon-corretto
           cache: maven
 
-      - name: Run backend tests
+      - name: Run unit tests (no Docker required)
         working-directory: apps/backend
         env:
-          SPRING_DATASOURCE_URL:       jdbc:postgresql://localhost:5432/quantedge_test
-          SPRING_DATASOURCE_USERNAME:  test_user
-          SPRING_DATASOURCE_PASSWORD:  test_password
-          SPRING_DATA_REDIS_HOST:      localhost
-          SPRING_DATA_REDIS_PORT:      6379
-          JWT_SECRET:                  ci_test_jwt_secret_key_very_long_for_testing
-          FINNHUB_API_KEY:             ""
-          ALPHA_VANTAGE_API_KEY:       ""
-        run: mvn test --enable-preview -q
+          JWT_SECRET:            ci_test_jwt_secret_key_very_long_for_hs512_algo
+          FINNHUB_API_KEY:       ""
+          ALPHA_VANTAGE_API_KEY: ""
+          GEMINI_API_KEY:        ""
+        run: mvn test -q
+
+      - name: Run integration tests (Testcontainers — Docker available in CI)
+        working-directory: apps/backend
+        env:
+          JWT_SECRET:            ci_test_jwt_secret_key_very_long_for_hs512_algo
+          FINNHUB_API_KEY:       ""
+          ALPHA_VANTAGE_API_KEY: ""
+          GEMINI_API_KEY:        ""
+        run: mvn failsafe:integration-test failsafe:verify -q
+        continue-on-error: false
 
       - name: Build backend JAR
         working-directory: apps/backend
-        run: mvn package -DskipTests --enable-preview -q
+        run: mvn package -DskipTests -q
 
       - name: Upload backend JAR artifact
         uses: actions/upload-artifact@v4

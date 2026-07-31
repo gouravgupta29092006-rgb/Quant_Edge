@@ -308,7 +308,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire - JUnit 5 with Java 21 Mockito compatibility -->
+            <!-- Surefire - JUnit 5 unit tests (excludes @Tag("integration") tests that need Docker) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -322,7 +322,36 @@
                         -Djdk.net.URLClassPath.disableClassPathURLCheck=true
                     </argLine>
                     <useModulePath>false</useModulePath>
+                    <!-- Exclude integration tests that require Docker/Testcontainers -->
+                    <excludedGroups>integration</excludedGroups>
                 </configuration>
+            </plugin>
+
+            <!-- Failsafe - Integration tests (run with mvn verify, requires Docker) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        --add-opens java.base/java.lang=ALL-UNNAMED
+                        --add-opens java.base/java.util=ALL-UNNAMED
+                        -Djdk.net.URLClassPath.disableClassPathURLCheck=true
+                    </argLine>
+                    <useModulePath>false</useModulePath>
+                    <!-- Only run @Tag("integration") tests -->
+                    <groups>integration</groups>
+                    <includes>
+                        <include>**/*Tests.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
 
