@@ -10,9 +10,11 @@ import com.quantedge.repository.StockQuoteRepository;
 import com.quantedge.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.lang.Nullable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,8 +42,12 @@ public class MarketDataService {
     private final FinnhubProvider finnhubProvider;
     private final StockQuoteRepository stockQuoteRepository;
     private final StockRepository stockRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
     private final SimpMessagingTemplate messagingTemplate;
+
+    /** Optional — null when running without Redis (local profile). */
+    @Autowired(required = false)
+    @Nullable
+    private RedisTemplate<String, Object> redisTemplate;
 
     private static final String REDIS_QUOTE_KEY = "quote:";
     private static final long QUOTE_CACHE_TTL_SECONDS = 15;

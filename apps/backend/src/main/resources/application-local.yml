@@ -1,20 +1,25 @@
-# Local development profile — overrides application.yml for dev without Redis
+# ─────────────────────────────────────────────────────────────────────────────
+# Local development profile — runs WITHOUT Redis
 # Activate with: -Dspring.profiles.active=local
+# PostgreSQL must be running on localhost:5432
+# ─────────────────────────────────────────────────────────────────────────────
 
 spring:
+  # Use simple in-memory cache instead of Redis
   cache:
     type: simple
 
-  # Disable Redis autoconfigure for local dev
-  data:
-    redis:
-      repositories:
-        enabled: false
-
-  # Disable mail for dev
+  # Disable Redis auto-configuration entirely for local dev
   autoconfigure:
     exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
       - org.springframework.boot.autoconfigure.mail.MailAutoConfiguration
+
+  # Disable mail for dev (no SMTP server needed)
+  mail:
+    host: localhost
+    port: 1025
 
 logging:
   level:
@@ -23,3 +28,6 @@ logging:
     org.springframework.web: INFO
     org.hibernate.SQL: DEBUG
     org.hibernate.orm.jdbc.bind: TRACE
+    # Suppress Redis connection warnings
+    io.lettuce: WARN
+    org.springframework.data.redis: WARN

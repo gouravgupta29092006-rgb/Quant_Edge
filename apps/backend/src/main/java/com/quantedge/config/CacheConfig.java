@@ -1,6 +1,8 @@
 package com.quantedge.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
@@ -21,15 +23,18 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Two-tier cache strategy:
- *   L1: Caffeine (in-memory, microsecond access) â€” for hot, short-lived data
- *   L2: Upstash Redis (distributed, per-instance) â€” for shared, longer-lived data
+ *   L1: Caffeine (in-memory, microsecond access) — for hot, short-lived data
+ *   L2: Redis (distributed) — for shared, longer-lived data (optional — skipped when Redis is unavailable)
  *
- * Cost: â‚¹0 â€” Caffeine is a free Java library, Upstash is free tier.
+ * Cost: ₹0 — Caffeine is a free Java library, Upstash Redis is free tier.
+ *
+ * When running with the 'local' profile (no Redis), only Caffeine L1 is active.
+ * Redis beans are guarded with @ConditionalOnBean(RedisConnectionFactory.class).
  */
 @Configuration
 public class CacheConfig {
 
-    // â”€â”€â”€ Cache name constants â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ─── Cache name constants ──────────────────────────────────────────
     public static final String CACHE_QUOTES      = "stock-quotes";       // 15s TTL
     public static final String CACHE_COMPANY     = "company-info";       // 24h TTL
     public static final String CACHE_HISTORICAL  = "historical-prices";  // 1h TTL
@@ -39,8 +44,8 @@ public class CacheConfig {
     public static final String CACHE_PORTFOLIO   = "portfolio-data";     // 30s TTL
 
     /**
-     * L1 Cache â€” Caffeine (in-process, zero network latency)
-     * Used as primary cache for hot market data endpoints.
+     * L1 Cache — Caffeine (in-process, zero network latency).
+     * Always active — used as the primary CacheManager in all profiles.
      */
     @Bean
     @Primary
@@ -54,10 +59,12 @@ public class CacheConfig {
     }
 
     /**
-     * L2 Cache â€” Redis (Upstash, distributed)
-     * Used for longer-lived data shared across restarts.
+     * L2 Cache — Redis (Upstash / local Redis).
+     * Only created when a RedisConnectionFactory is available in the context
+     * (i.e., Redis auto-config is active). Skipped in 'local' profile.
      */
     @Bean
+    @ConditionalOnBean(RedisConnectionFactory.class)
     public CacheManager redisCacheManager(RedisConnectionFactory connectionFactory) {
         RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeKeysWith(
@@ -82,9 +89,12 @@ public class CacheConfig {
     }
 
     /**
-     * RedisTemplate for manual cache operations (non-@Cacheable patterns).
+     * RedisTemplate for manual cache operations.
+     * Only created when RedisConnectionFactory is available.
+     * Skipped in 'local' profile (no Redis).
      */
     @Bean
+    @ConditionalOnBean(RedisConnectionFactory.class)
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
