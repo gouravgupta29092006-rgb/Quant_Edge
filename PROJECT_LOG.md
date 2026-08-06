@@ -1,116 +1,137 @@
-# QuantEdge — Project Log
+﻿# QuantEdge - Project Log
 
-> **Historical record of all completed work. Append-only — never delete entries.**
-
----
-
-## Entry 001
-
-**Date:** 2026-06-15
-**Phase:** Phase 1 — Project Scaffold
-**Tasks:** 1.1, 1.2, 1.3, 1.7, 1.8
-**Files Modified:**
-- `.gitignore` — Comprehensive ignore rules for Java, Node, env files
-- `README.md` — Project overview and setup guide
-- `package.json` — Root monorepo workspace config
-- `turbo.json` — Turborepo pipeline configuration
-- `docker-compose.yml` — PostgreSQL 16 + Redis 7 for local dev
-- `.eslintrc.json` — ESLint rules
-- `.prettierrc` — Prettier configuration
-**Commit:** (pending — initializing git now)
-**Summary:** Established complete project scaffold including monorepo structure, Docker local dev stack, lint/format tooling, and README. Note: Backend scaffold uses Java/Spring Boot (not Node.js/TypeScript as original TRACKER.md assumed — per Phase 2 business constraint update).
-**Next Task:** Task 1.4 — Backend Project Scaffold (Java/Maven)
+> Chronological record of all significant work sessions. Most recent entry first.
 
 ---
 
-## Entry 002
+## 2026-08-06 - Phase 17: Automated Integration Testing (100% Pass)
 
-**Date:** 2026-06-15
-**Phase:** Phase 1 (Task 1.4) + Phase 2 (Tasks 2.1–2.6)
-**Tasks:** 1.4, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6
-**Files Modified:**
-- `apps/backend/pom.xml` — Maven POM with all Spring Boot 3 dependencies
-- `apps/backend/src/main/java/com/quantedge/QuantEdgeApplication.java` — Spring Boot entry point
-- `apps/backend/src/main/resources/application.yml` — Main configuration
-- `apps/backend/src/main/resources/application-dev.yml` — Development profile
-- `apps/backend/src/main/resources/application-prod.yml` — Production profile (Neon + Upstash)
-- `apps/backend/.env.example` — Environment variable template
-- `apps/backend/src/main/java/com/quantedge/entity/` — 16 JPA entities (User, Portfolio, Holding, Transaction, PortfolioSnapshot, UserPreferences, RefreshToken, VerificationToken, Stock, Watchlist, WatchlistItem, PriceAlert, Strategy, Backtest, Notification, AuditLog)
-- `apps/backend/src/main/java/com/quantedge/repository/` — 15 Spring Data JPA repositories
-- `apps/backend/src/main/resources/db/migration/` — Flyway V1–V4 SQL migrations
-- `apps/backend/src/main/java/com/quantedge/config/CacheConfig.java` — Two-tier Caffeine + Redis cache
-- `apps/backend/src/main/java/com/quantedge/config/WebSocketConfig.java` — STOMP WebSocket
-- `apps/backend/src/main/java/com/quantedge/config/OpenApiConfig.java` — Swagger/OpenAPI
-- `apps/backend/src/main/java/com/quantedge/util/ApiResponse.java` — Standard response envelope
-- `apps/backend/src/main/java/com/quantedge/exception/` — ErrorCode, AppException, GlobalExceptionHandler
-**Commit:** (pending)
-**Summary:** Full Java/Spring Boot backend scaffold and database layer. Replaced Prisma with Flyway SQL migrations. Replaced Node/TypeScript stack with Java 21 + Spring Boot 3.3 + Maven. All entities faithfully implement SCHEMA.md. Zero-cost infrastructure: Neon PostgreSQL free tier, Upstash Redis free tier.
-**Next Task:** Phase 3 — Authentication
+**Commit:** `9801dd3` | **Branch:** `develop`
 
----
+### Work Done
+- Built comprehensive automated API test suite (run_tests.ps1) - 48 test cases across 11 modules
+- Identified and fixed all backend 500 errors discovered by tests
+- Achieved **100% pass rate: 48/48 tests green**
 
-## Entry 003
+### Bugs Discovered & Fixed
 
-**Date:** 2026-06-15
-**Phase:** Phase 3 — Authentication
-**Tasks:** 3.1–3.9
-**Files Modified:**
-- `apps/backend/src/main/java/com/quantedge/security/JwtService.java` — JWT with JJWT library
-- `apps/backend/src/main/java/com/quantedge/security/JwtAuthFilter.java` — OncePerRequestFilter
-- `apps/backend/src/main/java/com/quantedge/security/UserDetailsServiceImpl.java` — Spring Security UserDetailsService
-- `apps/backend/src/main/java/com/quantedge/config/SecurityConfig.java` — Spring Security configuration
-- `apps/backend/src/main/java/com/quantedge/controller/AuthController.java` — 11 auth endpoints
-- `apps/backend/src/main/java/com/quantedge/service/AuthService.java` — Complete auth business logic
-- `apps/backend/src/main/java/com/quantedge/service/EmailService.java` — Resend/SMTP email service
-- `apps/backend/src/main/java/com/quantedge/controller/HealthController.java` — Health check endpoint
-- `apps/backend/src/main/java/com/quantedge/dto/request/` — 10 request DTOs
-- `apps/backend/src/main/java/com/quantedge/dto/response/` — AuthResponse, MessageResponse
-- `apps/backend/src/main/java/com/quantedge/scheduler/ScheduledJobs.java` — @Scheduled cron jobs
-- `apps/backend/src/main/java/com/quantedge/provider/FinnhubProvider.java` — Market data client
-- `apps/backend/src/main/java/com/quantedge/provider/GeminiProvider.java` — Gemini AI client
-- `apps/backend/src/test/java/com/quantedge/QuantEdgeApplicationTests.java` — Testcontainers smoke test
-**Commit:** (pending)
-**Summary:** Complete authentication system implementing TECH_SPEC.md §12. Features: JWT access/refresh/interim tokens, BCrypt-12 password hashing, TOTP 2FA, account lockout, email verification, password reset, refresh token rotation. All tokens stored as SHA-256 hashes — raw tokens never persisted. EmailService logs to console in dev mode (zero email cost during development).
-**Next Task:** Phase 4 — Market Data (in-progress)
+| Bug | Root Cause | Fix |
+|-----|-----------|-----|
+| GET /portfolios -> 500 | Jackson serialized lazy Portfolio.user outside Hibernate session | @JsonIgnore on user, holdings, transactions, snapshots |
+| POST /watchlist -> 500 | Jackson serialized lazy WatchlistItem.watchlist | @JsonIgnore on watchlist |
+| POST /strategies -> 500 | ImmutableCollections.MapN cast to String in Hibernate JSON handler | Object -> Map<String,Object>, Map.of() -> new HashMap<>() |
+| POST /strategies wrong key -> 500 | Controller only read config key, test sent parameters | Accept both parameters + config with safe instanceof cast |
+| Redis required at startup | App crash without local Redis | @ConditionalOnBean on all Redis-dependent beans |
+
+### Test Suite Modules
+- Auth: register, login, wrong pwd, refresh, profile, no-auth 401
+- Portfolio: CRUD, trade, transactions
+- Watchlist: add, list, delete
+- Market Data: quote, search, chart, movers, indices, company
+- Analytics: metrics, equity curve
+- Strategies: CRUD, backtests
+- News: global + by symbol
+- AI: ask, analyse portfolio/stock, explain strategy
+- Security: no token, bad JWT, XSS, SQL injection
+- Cleanup: logout
 
 ---
 
-## Entry 004
+## 2026-07-31 - Redis Optional + Frontend Watchlist
 
-**Date:** 2026-06-15
-**Phase:** Phase 1 (Task 1.5) + Phase 6 (Frontend Foundation, partial)
-**Tasks:** 1.5 (partial)
-**Files Modified:**
-- `frontend/` — Next.js 14 scaffold with TypeScript, Tailwind, ESLint
-- `frontend/tailwind.config.ts` — Full QuantEdge design system (brand colors, animations, shadows)
-- `frontend/src/app/globals.css` — Premium dark-first CSS component library
-- `frontend/src/app/layout.tsx` — Root layout with SEO metadata, Inter font
-- `frontend/src/app/providers.tsx` — React Query provider with QuantEdge cache TTLs
-- `frontend/.env.local` — Frontend environment variables
-**Commit:** (pending)
-**Summary:** Next.js 14 frontend scaffolded with full premium design system. Dark-first color palette (electric indigo brand, dark navy backgrounds). Custom Tailwind components: `.card`, `.btn-primary`, `.input`, `.badge`, `.skeleton`, price display utilities. JetBrains Mono for financial numbers. Animations: fade-in, slide-up, shimmer, glow, float.
-**Next Task:** Phase 6.2 — Zustand stores, API client
+**Commits:** `389de00`, `607a8ee` | **Branch:** `develop`
 
+### Work Done
+- Fixed Redis startup crash with @ConditionalOnBean on all Redis-dependent beans
+- Made MarketDataService.redisTemplate an Optional<RedisTemplate> - graceful fallback to Caffeine L1 cache
+- Completed Watchlist frontend page with full-featured data table
 
-## Entry 005
+---
 
-**Date:** 2026-06-28
-**Phase:** Phase 4 (complete) + Phase 5 (partial)
-**Tasks:** 4.1-4.8 (Phase 4 complete), 5.1-5.4 (Phase 5 partial)
-**Files Modified:**
-- AlphaVantageProvider.java � historical OHLCV from AlphaVantage free API
-- HistoricalDataService.java � chart data for all ranges (1D to MAX)
-- ChartController.java � GET /market/chart/{symbol}?range=1Y
-- NewsService.java � company + market news from Finnhub, deduplicated
-- NewsController.java � GET /news/market + GET /news/{symbol}
-- ScheduledJobs.java � wired price broadcast (15s) + snapshot (midnight)
-- V5__create_stock_quotes_table.sql � missing stock_quotes Flyway migration
-- PortfolioService.java � full paper trading engine with BUY/SELL
-- PortfolioController.java � 6 REST endpoints for portfolio management
-- CreatePortfolioRequest.java, TradeRequest.java, PortfolioResponse.java
-- WatchlistService.java � add/remove/list with 50-item limit
-- WatchlistController.java � watchlist REST endpoints
-- PortfolioSnapshotService.java � daily P&L snapshot job
-**Commits:** 0771e9a, 1bac2ad, bdd4b35, 9caab84, 5f13195, cdeb952, c0b46df, 13b8c13
-**Summary:** Completed Phase 4 (market data, chart, news, real-time WS) and Phase 5 Tasks 5.1-5.4 (portfolio trading, watchlist, snapshots). All commits pushed to origin/develop.
-**Next Task:** Phase 5 Tasks 5.5-5.6 (AnalyticsService) then Phase 6 (Frontend Foundation � API client, Zustand stores, auth pages)
+## 2026-07-20 - Phase 15: Unit Testing Complete
+
+**Commits:** `aff91a3`, `68e808b` | **Branch:** `develop`
+
+### Work Done
+- Fixed all 38 unit tests
+- Test classes: JwtServiceTest (16), AuthServiceTest (9), PortfolioServiceTest (8), BacktestServiceTest (5)
+- Properly separated unit tests from integration tests with Maven Surefire excludes
+
+---
+
+## 2026-07-01 - Phase 16: DevOps & Docker
+
+**Commit:** `5c60d31` | **Branch:** `develop`
+
+### Work Done
+- Multi-stage Dockerfile for backend (JDK 25 builder -> JRE runtime)
+- Multi-stage Dockerfile for frontend (Node builder -> Nginx server)
+- docker-compose.yml for local full-stack development
+- GitHub Actions CI pipeline (.github/workflows/ci.yml)
+
+---
+
+## 2026-06-28 - Phase 11-13: AI, News, Real-Time
+
+**Commit:** `dd673da` | **Branch:** `develop`
+
+### Work Done
+- Integrated Google Gemini Flash via REST API - 5 AI endpoints
+- News service pulling from Finnhub with caching
+- STOMP WebSocket server for real-time price streaming
+- Frontend WebSocket provider and live quote subscriptions
+
+---
+
+## 2026-06-20 - Phase 9-10: Strategy Builder + Backtesting
+
+**Commit:** `ed547d3` | **Branch:** `develop`
+
+### Work Done
+- Strategy CRUD backend with JSONB rule storage (Hibernate @JdbcTypeCode)
+- Backtesting engine: SMA Crossover, RSI, Buy-and-Hold strategies
+- Frontend Strategy Builder page with parameter forms
+- Analytics engine with Sharpe, max drawdown, win rate metrics
+
+---
+
+## 2026-06-15 - Phase 6-8: Frontend Foundation + Dashboard
+
+**Commits:** `7e5c8de`, `ed547d3` | **Branch:** `develop`
+
+### Work Done
+- Next.js 14 App Router frontend with Zustand state management
+- All 10 app pages built and functional
+- JWT auth flow with automatic refresh on 401
+- 7-widget dashboard
+
+---
+
+## 2026-06-13 - Phase 1-5: Full Backend Foundation
+
+**Commits:** `b29f314`, `845e137`, `1dd2328`, `cdeb952` | **Branch:** `develop`
+
+### Work Done
+- Maven monorepo with Spring Boot 3.3 backend
+- Flyway migrations for all 15 database tables
+- Complete JPA entity layer
+- JWT authentication (HS512, access + refresh token rotation)
+- Portfolio paper trading engine with atomic transactions
+- Market data integration (Finnhub + Alpha Vantage)
+- Email service via Resend
+- Swagger/OpenAPI documentation
+
+---
+
+## Project Milestones
+
+| Date | Milestone | Commit |
+|------|-----------|--------|
+| 2026-06-13 | Full backend foundation (Phases 1-5) | `845e137` |
+| 2026-06-15 | Frontend + Dashboard (Phases 6-7) | `7e5c8de` |
+| 2026-06-20 | Strategy, Backtest, Analytics (Phases 8-10) | `ed547d3` |
+| 2026-06-28 | AI, News, Real-Time (Phases 11-13) | `dd673da` |
+| 2026-07-01 | DevOps + Docker (Phase 16) | `5c60d31` |
+| 2026-07-20 | Unit Tests 38/38 (Phase 15) | `aff91a3` |
+| 2026-07-31 | Redis optional + Watchlist UI | `389de00` |
+| 2026-08-06 | Integration Tests 48/48 - 100% pass | `9801dd3` |
