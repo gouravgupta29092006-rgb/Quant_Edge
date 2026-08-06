@@ -1,5 +1,6 @@
 package com.quantedge.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -11,7 +12,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "strategies", indexes = {
@@ -27,6 +30,7 @@ public class Strategy {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -51,19 +55,23 @@ public class Strategy {
     // JSON columns â€” store structured rule definitions
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "rules", columnDefinition = "jsonb", nullable = false)
-    private Object rules;
+    @Builder.Default
+    private Map<String, Object> rules = new HashMap<>();
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "indicators", columnDefinition = "jsonb", nullable = false)
-    private Object indicators;
+    @Builder.Default
+    private Map<String, Object> indicators = new HashMap<>();
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "entry_conditions", columnDefinition = "jsonb", nullable = false)
-    private Object entryConditions;
+    @Builder.Default
+    private Map<String, Object> entryConditions = new HashMap<>();
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "exit_conditions", columnDefinition = "jsonb", nullable = false)
-    private Object exitConditions;
+    @Builder.Default
+    private Map<String, Object> exitConditions = new HashMap<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "position_sizing", nullable = false)
@@ -98,6 +106,7 @@ public class Strategy {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "strategy", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private List<Backtest> backtests = new ArrayList<>();

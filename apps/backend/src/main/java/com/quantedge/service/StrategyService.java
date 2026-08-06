@@ -50,10 +50,10 @@ public class StrategyService {
                 .user(userRef)
                 .name(name.trim())
                 .description(description)
-                .rules(config)   // store config as rules JSON
-                .indicators(Map.of())
-                .entryConditions(Map.of())
-                .exitConditions(Map.of())
+                .rules(new java.util.HashMap<>(config != null ? config : Map.of()))
+                .indicators(new java.util.HashMap<>())
+                .entryConditions(new java.util.HashMap<>())
+                .exitConditions(new java.util.HashMap<>())
                 .build();
         strategy = strategyRepository.save(strategy);
         log.info("Strategy created: {} for user: {}", strategy.getId(), userId);

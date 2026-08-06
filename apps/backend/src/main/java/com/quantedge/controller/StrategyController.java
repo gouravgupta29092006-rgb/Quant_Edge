@@ -49,8 +49,10 @@ public class StrategyController {
             @AuthenticationPrincipal UserDetails user) {
         String name        = String.valueOf(body.getOrDefault("name", "Untitled Strategy"));
         String description = String.valueOf(body.getOrDefault("description", ""));
+        // Accept both 'parameters' (test/CLI) and 'config' (frontend) keys
+        Object rawConfig = body.getOrDefault("parameters", body.getOrDefault("config", Map.of("type", "BUY_AND_HOLD")));
         @SuppressWarnings("unchecked")
-        Map<String, Object> config = (Map<String, Object>) body.getOrDefault("config", Map.of("type", "BUY_AND_HOLD"));
+        Map<String, Object> config = (rawConfig instanceof Map) ? (Map<String, Object>) rawConfig : Map.of("type", "BUY_AND_HOLD");
         Strategy strategy = strategyService.createStrategy(user.getUsername(), name, description, config);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(strategy));
     }
