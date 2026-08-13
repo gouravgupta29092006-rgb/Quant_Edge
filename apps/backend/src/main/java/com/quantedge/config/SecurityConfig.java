@@ -76,9 +76,11 @@ public class SecurityConfig {
 
             // â”€â”€â”€ Authorization Rules â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
             .authorizeHttpRequests(auth -> auth
-                // Health + actuator
-                .requestMatchers("/health", "/actuator/**").permitAll()
-                // Swagger UI (dev only â€” disabled in prod via application-prod.yml)
+                // Health check only
+                .requestMatchers("/health", "/actuator/health").permitAll()
+                // Other actuator endpoints require admin role
+                .requestMatchers("/actuator/**").hasRole("ADMIN")
+                // Swagger UI/API docs (read-only, no data exposed)
                 .requestMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                 // Public auth endpoints
                 .requestMatchers(HttpMethod.POST,

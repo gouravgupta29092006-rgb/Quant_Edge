@@ -80,3 +80,8 @@ apps/backend/target/
 # One-off debug scripts (superseded by Flyway migrations)
 fix_schema.sql
 
+
+# Local launcher scripts (may contain credentials)
+start.bat
+start.ps1
+start.sh

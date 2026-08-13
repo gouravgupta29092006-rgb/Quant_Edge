@@ -7,8 +7,8 @@ import { useAuthStore } from '@/stores/authStore';
 
 interface FormData {
   email: string;
-  username: string;
-  displayName: string;
+  firstName: string;
+  lastName: string;
   password: string;
   confirmPassword: string;
 }
@@ -17,7 +17,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const { register, isLoading, error, clearError } = useAuthStore();
   const [form, setForm] = useState<FormData>({
-    email: '', username: '', displayName: '', password: '', confirmPassword: '',
+    email: '', firstName: '', lastName: '', password: '', confirmPassword: '',
   });
   const [registered, setRegistered] = useState(false);
   const [localError, setLocalError] = useState('');
@@ -27,10 +27,12 @@ export default function RegisterPage() {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
 
   const validate = (): string => {
-    if (form.username.length < 3) return 'Username must be at least 3 characters.';
+    if (form.firstName.trim().length < 1) return 'First name is required.';
+    if (form.lastName.trim().length < 1) return 'Last name is required.';
     if (form.password.length < 8) return 'Password must be at least 8 characters.';
     if (!/[A-Z]/.test(form.password)) return 'Password must contain at least one uppercase letter.';
     if (!/[0-9]/.test(form.password)) return 'Password must contain at least one number.';
+    if (!/[@#$%^&+=!]/.test(form.password)) return 'Password must contain a special character (@#$%^&+=!).';
     if (form.password !== form.confirmPassword) return 'Passwords do not match.';
     return '';
   };
@@ -44,8 +46,8 @@ export default function RegisterPage() {
     try {
       await register({
         email: form.email,
-        username: form.username,
-        displayName: form.displayName || form.username,
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
         password: form.password,
       });
       setRegistered(true);
@@ -110,17 +112,17 @@ export default function RegisterPage() {
                 value={form.email} onChange={set('email')} />
             </div>
 
-            {/* Row: username + display name */}
+            {/* Row: First name + Last name */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="reg-username" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Username</label>
-                <input id="reg-username" type="text" required className="input" placeholder="trader99"
-                  value={form.username} onChange={set('username')} minLength={3} maxLength={30} />
+                <label htmlFor="reg-firstname" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">First name</label>
+                <input id="reg-firstname" type="text" required className="input" placeholder="John"
+                  value={form.firstName} onChange={set('firstName')} maxLength={50} />
               </div>
               <div>
-                <label htmlFor="reg-displayname" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Display name</label>
-                <input id="reg-displayname" type="text" className="input" placeholder="John D."
-                  value={form.displayName} onChange={set('displayName')} maxLength={50} />
+                <label htmlFor="reg-lastname" className="block text-sm font-medium text-[var(--text-secondary)] mb-2">Last name</label>
+                <input id="reg-lastname" type="text" required className="input" placeholder="Doe"
+                  value={form.lastName} onChange={set('lastName')} maxLength={50} />
               </div>
             </div>
 

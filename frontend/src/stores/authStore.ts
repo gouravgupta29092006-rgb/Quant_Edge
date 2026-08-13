@@ -44,8 +44,8 @@ interface LoginResult {
 interface RegisterData {
   email: string;
   password: string;
-  username: string;
-  displayName: string;
+  firstName: string;
+  lastName: string;
 }
 
 // ─── Store ────────────────────────────────────────────────

@@ -8,17 +8,20 @@ import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'ax
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
 
 // Token storage keys
-const ACCESS_TOKEN_KEY  = 'qe_access_token';
 const REFRESH_TOKEN_KEY = 'qe_refresh_token';
 
+// Access token stored IN MEMORY only (not localStorage) to prevent XSS theft.
+// On page refresh the refresh token re-obtains a new access token automatically.
+let _accessToken: string | null = null;
+
 export const tokenStore = {
-  getAccess:  () => typeof window !== 'undefined' ? localStorage.getItem(ACCESS_TOKEN_KEY)  : null,
+  getAccess:  () => _accessToken,
   getRefresh: () => typeof window !== 'undefined' ? localStorage.getItem(REFRESH_TOKEN_KEY) : null,
-  setAccess:  (t: string) => localStorage.setItem(ACCESS_TOKEN_KEY, t),
-  setRefresh: (t: string) => localStorage.setItem(REFRESH_TOKEN_KEY, t),
+  setAccess:  (t: string) => { _accessToken = t; },
+  setRefresh: (t: string) => { if (typeof window !== 'undefined') localStorage.setItem(REFRESH_TOKEN_KEY, t); },
   clear:      () => {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
-    localStorage.removeItem(REFRESH_TOKEN_KEY);
+    _accessToken = null;
+    if (typeof window !== 'undefined') localStorage.removeItem(REFRESH_TOKEN_KEY);
   },
 };
 
