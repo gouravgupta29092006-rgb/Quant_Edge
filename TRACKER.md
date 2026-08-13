@@ -1,6 +1,6 @@
 ﻿# QuantEdge - Project Tracker
 
-> **Version:** 1.0.0 | **Status:** Active | **Last Updated:** 2026-08-06
+> Version: 1.0.0 | Status: Active | Last Updated: 2026-08-13
 
 ---
 
@@ -24,12 +24,13 @@ Phase 14 - Admin Panel               [SKIP] 0/6   tasks  | SKIPPED - not critica
 Phase 15 - Unit Testing              [DONE] 8/8   tasks  | commit: aff91a3 (38 tests, 0 failures)
 Phase 16 - DevOps & Deployment       [DONE] 8/8   tasks  | commit: 5c60d31
 Phase 17 - Integration Testing       [DONE] 5/5   tasks  | commit: 9801dd3 (48 tests, 100% pass)
---------------------------------------------------------------------------
-TOTAL                                [DONE] 125/131 tasks completed (6 skipped: Phase 14)
+Phase 18 - Security Audit            [DONE] 6/6   tasks  | commit: 76d39bd (6 issues fixed)
+----------------------------------------------------------------------
+TOTAL                                [DONE] 131/137 tasks completed (6 skipped: Phase 14)
 
-LAST COMMIT: 9801dd3 - 2026-08-06 | fix: resolve all 500 errors (48/48 tests passing)
+LAST COMMIT: 76d39bd - 2026-08-13 | security: comprehensive security audit and hardening
 GIT BRANCH:  develop | REMOTE: origin/develop
-PROJECT STATUS: PRODUCTION READY - ALL TESTS PASSING
+PROJECT STATUS: PRODUCTION READY - FULLY TESTED & SECURED
 ```
 
 ---
@@ -38,109 +39,100 @@ PROJECT STATUS: PRODUCTION READY - ALL TESTS PASSING
 
 - **URL:** https://github.com/gouravgupta29092006-rgb/Quant_Edge
 - **Branches:** `main` (release), `develop` (integration)
-- **Default Branch:** `develop`
-- **Latest Release:** `main` @ `06da222` - v1.0.0
+- **Latest Commit:** `76d39bd` on develop
 
 ---
 
-## PHASE 17 - INTEGRATION TESTING
+## PHASE 18 - SECURITY AUDIT & HARDENING
 
-### Task 17.1 - Build Test Infrastructure
+### Task 18.1 - Full Codebase Security Scan
 ```
-[DONE] Create run_tests.ps1 automated test script
-[DONE] Cover all 11 API modules
-[DONE] ASCII-only output (PowerShell 5.1 compatible)
-[DONE] Dynamic token/ID tracking across test cases
+[DONE] Scan for hardcoded secrets in all source files
+[DONE] Scan for NEXT_PUBLIC_ env var leaks in frontend bundle
+[DONE] Scan for open/unauthenticated endpoints
+[DONE] Review CORS configuration
+[DONE] Review JWT token storage strategy
+[DONE] Audit actuator endpoint exposure
 ```
-**Commit:** `9801dd3` - fix: resolve all 500 errors found by automated test suite
+**Commit:** `76d39bd`
 
-### Task 17.2 - Fix Portfolio/Watchlist Lazy Load 500
+### Task 18.2 - Fix Registration Bug (CRITICAL)
 ```
-[DONE] Add @JsonIgnore on Portfolio.user, holdings, transactions, snapshots
-[DONE] Add @JsonIgnore on WatchlistItem.watchlist
-[DONE] Add @JsonIgnore on Strategy.user, Strategy.backtests
+[DONE] Identified: frontend sent {username, displayName}
+[DONE] Backend expects: {firstName, lastName} (RegisterRequest DTO)
+[DONE] Fixed register/page.tsx - firstName + lastName fields
+[DONE] Fixed authStore.ts - RegisterData interface updated
+[DONE] Added special-char validation matching backend @Pattern regex
 ```
-**Commit:** `9801dd3`
+**Commit:** `76d39bd`
 
-### Task 17.3 - Fix Strategy ClassCastException 500
+### Task 18.3 - Fix JWT Access Token Storage (XSS Risk)
 ```
-[DONE] Change Strategy rules/indicators/entryConditions/exitConditions from Object to Map<String,Object>
-[DONE] Add @Builder.Default with new HashMap<>() initializers
-[DONE] StrategyService.createStrategy: use new HashMap<>(config) instead of Map.of()
+[DONE] Access token was stored in localStorage (readable by XSS)
+[DONE] Moved to in-memory module-scoped variable in api.ts
+[DONE] Refresh token stays in localStorage (needed for page reload)
+[DONE] On refresh: refresh token -> new access token -> stored in memory
 ```
-**Commit:** `9801dd3`
+**Commit:** `76d39bd`
 
-### Task 17.4 - Fix Strategy Controller Key Handling
+### Task 18.4 - Lock Down Actuator Endpoints
 ```
-[DONE] Accept both 'parameters' (test) and 'config' (frontend) request body keys
-[DONE] Safe instanceof cast with fallback to prevent runtime ClassCastException
+[DONE] /actuator/metrics was publicly accessible without auth
+[DONE] SecurityConfig.java: /actuator/health -> permitAll()
+[DONE] SecurityConfig.java: /actuator/** -> hasRole("ADMIN")
+[DONE] application.yml: actuator exposure reduced to health only
 ```
-**Commit:** `9801dd3`
+**Commit:** `76d39bd`
 
-### Task 17.5 - Final Test Run
+### Task 18.5 - Remove Hardcoded Credentials from start.bat
 ```
-[DONE] 48/48 tests passing (100%)
-[DONE] 0 failures, 0 skipped
-[DONE] All modules: Auth, Portfolio, Watchlist, Market, Analytics, Strategy, News, AI, Security
+[DONE] start.bat had SPRING_DATASOURCE_PASSWORD=devpassword123 hardcoded
+[DONE] Rewrote start.bat to load credentials dynamically from .env file
+[DONE] Added start.bat to .gitignore
+[DONE] Updated .env.example with clear instructions and no real values
 ```
+**Commit:** `76d39bd`
 
----
-
-## PHASE 16 - DEVOPS & DEPLOYMENT
-
-### Task 16.1 - Backend Dockerfile
+### Task 18.6 - SECURITY.md
 ```
-[DONE] Multi-stage build: JDK 25 maven builder -> JRE 25 runtime
-[DONE] Non-root user for security
-[DONE] Health check via /actuator/health
+[DONE] Created SECURITY.md with full security architecture docs
+[DONE] Vulnerability reporting process documented
+[DONE] Known trade-offs documented (refresh token in localStorage)
+[DONE] Security checklist (backend + frontend + infrastructure)
+[DONE] Security fixes log with dates, severity, and fixes
+[DONE] CVE monitoring instructions
 ```
-
-### Task 16.2 - Frontend Dockerfile
-```
-[DONE] Multi-stage build: Node 24 builder -> Nginx alpine
-[DONE] Custom nginx.conf for SPA routing
-```
-
-### Task 16.3 - Docker Compose
-```
-[DONE] docker-compose.yml: postgres 18, redis 7, backend, frontend
-[DONE] Volume mounts for data persistence
-[DONE] Environment variable injection
-```
-
-### Task 16.4 - GitHub Actions CI
-```
-[DONE] .github/workflows/ci.yml
-[DONE] Java build + test on push to develop
-[DONE] Next.js lint + build check
-[DONE] Docker image build verification
-```
-
-### Task 16.5 - Deployment Guide
-```
-[DONE] DEPLOYMENT.md: Docker local + Render.com free tier guide
-[DONE] Zero-cost deployment path documented
-[DONE] Environment variable documentation
-```
+**Commit:** `76d39bd`
 
 ---
 
-## PHASE 15 - UNIT TESTING
+## PHASE 17 - INTEGRATION TESTING (48/48 - 100%)
 
-### Unit Tests (38/38 Passing)
 ```
-[DONE] JwtServiceTest  - 16 tests (token generation, validation, expiry)
-[DONE] AuthServiceTest - 9 tests  (register, login, refresh, logout)
-[DONE] PortfolioServiceTest - 8 tests (CRUD, trade execution, balance checks)
-[DONE] BacktestServiceTest  - 5 tests (SMA, RSI, BuyHold strategy runs)
+[DONE] run_tests.ps1 - 48 automated tests across 11 modules
+[DONE] Fixed lazy-load serialization (LazyInitializationException -> @JsonIgnore)
+[DONE] Fixed Strategy ClassCastException (Map.of() -> new HashMap<>())
+[DONE] Fixed Strategy controller key mismatch (parameters vs config)
+[DONE] All 48 tests passing: Auth, Portfolio, Watchlist, Market, Analytics,
+       Strategies, News, AI, Security
 ```
-**Commit:** `aff91a3` - test(phase15): fix all unit tests - 38/38 passing
+**Commit:** `9801dd3`
+
+---
+
+## PHASE 15 - UNIT TESTING (38/38)
+
+```
+[DONE] JwtServiceTest  - 16 tests
+[DONE] AuthServiceTest - 9 tests
+[DONE] PortfolioServiceTest - 8 tests
+[DONE] BacktestServiceTest  - 5 tests
+```
+**Commit:** `aff91a3`
 
 ---
 
 ## PHASE 1-14 SUMMARY
-
-All previous phases are complete and committed. See PROJECT_LOG.md for detailed session notes.
 
 | Phase | Key Deliverable | Status |
 |-------|-----------------|--------|
@@ -161,3 +153,4 @@ All previous phases are complete and committed. See PROJECT_LOG.md for detailed 
 | 15 | 38 unit tests, 0 failures | DONE |
 | 16 | Docker, GitHub Actions CI, deployment docs | DONE |
 | 17 | 48 integration tests, 100% pass rate | DONE |
+| 18 | Security audit, 6 fixes, SECURITY.md | DONE |
