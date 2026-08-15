@@ -8,6 +8,25 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { apiPost } from '@/lib/api';
 import { tokenStore } from '@/lib/api';
 
+// ─── Session cookie helpers ────────────────────────────────
+// The Next.js edge middleware cannot read localStorage, so we use a
+// lightweight non-sensitive cookie as an "authenticated" signal.
+// The real auth token stays in memory (tokenStore) — this cookie
+// contains no sensitive data, just a presence flag.
+const SESSION_COOKIE = 'qe_session';
+const cookieSession = {
+  set: () => {
+    if (typeof document === 'undefined') return;
+    // 30-day expiry matching refresh token lifetime
+    const expires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toUTCString();
+    document.cookie = `${SESSION_COOKIE}=1; path=/; expires=${expires}; SameSite=Lax`;
+  },
+  clear: () => {
+    if (typeof document === 'undefined') return;
+    document.cookie = `${SESSION_COOKIE}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+  },
+};
+
 // ─── Types ────────────────────────────────────────────────
 export interface User {
   id: string;
@@ -75,6 +94,7 @@ export const useAuthStore = create<AuthState>()(
 
           tokenStore.setAccess(data.accessToken!);
           tokenStore.setRefresh(data.refreshToken!);
+          cookieSession.set(); // allow middleware to detect auth state
           set({ user: data.user!, isAuthenticated: true, isLoading: false });
           return { requiresTwoFactor: false };
         } catch (err: any) {
@@ -102,6 +122,7 @@ export const useAuthStore = create<AuthState>()(
           if (refreshToken) await apiPost('/auth/logout', { refreshToken });
         } catch { /* ignore logout errors */ }
         tokenStore.clear();
+        cookieSession.clear(); // clear middleware auth signal
         set({ user: null, isAuthenticated: false, error: null });
       },
 
