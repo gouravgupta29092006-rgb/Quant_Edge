@@ -1,7 +1,7 @@
 # QuantEdge - Current Status
 
 > Auto-maintained file. Updated after every completed task.
-> Last updated: 2026-08-20T06:00 UTC
+> Last updated: 2026-08-31T21:55 UTC
 
 ---
 
@@ -12,10 +12,12 @@
 - **Branches on GitHub:** `main`, `develop`
 
 ## Current Phase
-**Phase 19 - Full UI Redesign: COMPLETE**
+**Phase 20 - Framer Motion + Premium UI Redesign: COMPLETE**
+
 
 ## Last Completed Task
-Phase 19 - Complete premium UI redesign of all 10 pages and 7 dashboard components. Deep black fintech aesthetic with Outfit/Inter/JetBrains Mono typography, design token system, glassmorphic cards, and micro-animations. 0 TypeScript errors. (`59ea30e`)
+Phase 20 — Full Framer Motion + premium UI redesign. Switched typography to Calistoga (display) + Inter + JetBrains Mono tri-stack. New Financial Dashboard Dark palette (#020617 base). 20+ files rebuilt with intentional motion: spring sidebar collapse, layoutId active nav indicator, AnimatePresence page transitions, spring number counters, staggered card/table entrances, animated chart range pills, glassmorphic ticker bar, motion auth forms. Zero TypeScript errors. `@/lib/utils` (cn helper) + `@/lib/motion.ts` (shared variants) added.
+
 
 ## Last Commit
 - **Hash:** `59ea30e`

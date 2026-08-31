@@ -1,7 +1,9 @@
 # QuantEdge — Design System
 
-> **Version:** 1.0.0 | **Status:** Active | **Date:** June 2026
-> **Philosophy:** Hybrid Fintech Command Center — Professional · Intelligent · Analytical · Premium
+> **Version:** 3.0.0 | **Status:** Active | **Date:** August 2026
+> **Philosophy:** Premium Fintech Intelligence — Calistoga editorial warmth · Intentional Framer Motion · Financial Dashboard Dark palette
+> **Motion Library:** `src/lib/motion.ts` — all spring configs and variants centralized here. Never define motion inline.
+
 
 ---
 
